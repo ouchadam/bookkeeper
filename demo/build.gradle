@@ -1,0 +1,14 @@
+apply plugin: 'android'
+
+dependencies {
+
+    compile project(':core')
+
+}
+
+android {
+
+    compileSdkVersion 17
+    buildToolsVersion "17"
+
+}
