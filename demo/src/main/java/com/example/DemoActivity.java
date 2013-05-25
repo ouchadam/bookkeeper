@@ -25,7 +25,7 @@ public class DemoActivity extends Activity implements View.OnClickListener {
 
         NotificationWatcher notificationWatcher = new NotificationWatcher(this);
 
-        Downloader.download(test, notificationWatcher);
+        Downloader.download(this, test, notificationWatcher);
     }
 
     private static class Test implements Downloadable {

@@ -1,6 +1,8 @@
 package com.ouchadam.downloader;
 
-public class ProgressValues {
+import java.io.Serializable;
+
+public class ProgressValues implements Serializable {
 
     private final int downloadedSize;
     private int percentage;

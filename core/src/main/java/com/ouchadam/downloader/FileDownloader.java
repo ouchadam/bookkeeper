@@ -6,7 +6,7 @@ import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
-public class FileDownloader {
+class FileDownloader {
 
     private static final int DOWNLOAD_BUFFER_SIZE = 1024;
 

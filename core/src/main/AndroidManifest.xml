@@ -9,6 +9,13 @@
     android:targetSdkVersion="17" />
 
   <uses-permission android:name="android.permission.INTERNET" />
-gral  <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+  <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+
+  <application>
+
+    <service android:name="com.ouchadam.downloader.DownloadService"/>
+
+  </application>
+
 
 </manifest>
