@@ -22,12 +22,20 @@ public class DownloadService extends IntentService implements FileDownloader.Fil
     protected void onHandleIntent(Intent intent) {
         if (intent != null) {
             progressUpdater = new ProgressUpdater(this);
-            Bundle bundledDownloadable = intent.getBundleExtra("bundle");
+
+            Bundle bundledDownloadable = getBundledDownloadable(intent);
             Downloadable downloadable = bundler.from(bundledDownloadable);
+
             progressUpdater.broadcastStart(bundledDownloadable);
+
             downloadFile(downloadable);
+
             progressUpdater.broadcastFinish();
         }
+    }
+
+    private Bundle getBundledDownloadable(Intent intent) {
+        return intent.getBundleExtra(Downloader.BUNDLE);
     }
 
     private void downloadFile(Downloadable downloadable) {

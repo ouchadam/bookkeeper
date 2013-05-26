@@ -42,13 +42,12 @@ public class DownloadProgressReceiver extends BroadcastReceiver {
     }
 
     private void handleStart(Intent intent) {
-        Bundle downloadable = intent.getBundleExtra("downloadable");
+        Bundle downloadable = intent.getBundleExtra(ProgressUpdater.DOWNLOADABLE);
         watcherManager.onStart(bundler.from(downloadable));
     }
 
-
     private void handleUpdate(Intent intent) {
-        ProgressValues values = (ProgressValues) intent.getSerializableExtra("values");
+        ProgressValues values = (ProgressValues) intent.getSerializableExtra(ProgressUpdater.PROGRESS_VALUES);
         watcherManager.onUpdate(values);
     }
 

@@ -6,6 +6,9 @@ import android.os.Bundle;
 
 public class ProgressUpdater {
 
+    static final String DOWNLOADABLE = "downloadable";
+    static final String PROGRESS_VALUES = "values";
+
     private final Context context;
 
     enum Action {
@@ -20,13 +23,13 @@ public class ProgressUpdater {
 
     public void broadcastStart(Bundle bundledDownloadable) {
         Intent intent = new Intent(Action.START.name());
-        intent.putExtra("downloadable", bundledDownloadable);
+        intent.putExtra(DOWNLOADABLE, bundledDownloadable);
         sendBroadcast(intent);
     }
 
     public void broadcastUpdate(ProgressValues progressValues) {
         Intent intent = new Intent(Action.UPDATE.name());
-        intent.putExtra("values", progressValues);
+        intent.putExtra(PROGRESS_VALUES, progressValues);
         sendBroadcast(intent);
     }
 
@@ -38,4 +41,5 @@ public class ProgressUpdater {
     private void sendBroadcast(Intent intent) {
         context.sendBroadcast(intent);
     }
+    
 }

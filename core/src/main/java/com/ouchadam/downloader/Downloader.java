@@ -8,6 +8,8 @@ import com.ouchadam.downloader.bundle.DownloadableBundler;
 
 public class Downloader {
 
+    static final String BUNDLE = "bundle";
+
     public static void download(Context context, Downloadable downloadable, DownloadWatcher... downloadWatchers) {
         initProgressReciever(context, downloadWatchers);
         startDownloadService(context, downloadable);
@@ -28,7 +30,7 @@ public class Downloader {
         Intent service = new Intent(context, DownloadService.class);
 
         Bundler<Downloadable> bundler = new DownloadableBundler();
-        service.putExtra("bundle", bundler.to(downloadable));
+        service.putExtra(BUNDLE, bundler.to(downloadable));
         return service;
     }
 
