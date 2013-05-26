@@ -14,7 +14,8 @@ public class Downloader {
     }
 
     private static void initProgressReciever(Context context, DownloadWatcher[] downloadWatchers) {
-        DownloadProgressReceiver downloadProgressReceiver = new DownloadProgressReceiver(downloadWatchers);
+        DownloadWatcherManager downloadWatcherManager = new DownloadWatcherManager(downloadWatchers);
+        DownloadProgressReceiver downloadProgressReceiver = new DownloadProgressReceiver(downloadWatcherManager);
         downloadProgressReceiver.register(context);
     }
 

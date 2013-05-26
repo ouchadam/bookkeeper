@@ -8,7 +8,7 @@ public class ProgressUpdater {
 
     private final Context context;
 
-    enum ACTION {
+    enum Action {
         START,
         UPDATE,
         STOP;
@@ -19,19 +19,19 @@ public class ProgressUpdater {
     }
 
     public void broadcastStart(Bundle bundledDownloadable) {
-        Intent intent = new Intent(ACTION.START.name());
+        Intent intent = new Intent(Action.START.name());
         intent.putExtra("downloadable", bundledDownloadable);
         sendBroadcast(intent);
     }
 
     public void broadcastUpdate(ProgressValues progressValues) {
-        Intent intent = new Intent(ACTION.UPDATE.name());
+        Intent intent = new Intent(Action.UPDATE.name());
         intent.putExtra("values", progressValues);
         sendBroadcast(intent);
     }
 
     public void broadcastFinish() {
-        Intent intent = new Intent(ACTION.STOP.name());
+        Intent intent = new Intent(Action.STOP.name());
         sendBroadcast(intent);
     }
 

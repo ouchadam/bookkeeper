@@ -9,56 +9,55 @@ import android.os.Bundle;
 import com.ouchadam.downloader.bundle.Bundler;
 import com.ouchadam.downloader.bundle.DownloadableBundler;
 
-import java.util.Arrays;
-import java.util.List;
-
 public class DownloadProgressReceiver extends BroadcastReceiver {
 
-    private final List<DownloadWatcher> downloadWatchers;
+    private final DownloadWatcherManager watcherManager;
     private final Bundler<Downloadable> bundler;
 
-    public DownloadProgressReceiver(DownloadWatcher... downloadWatchers) {
-        this.downloadWatchers = Arrays.asList(downloadWatchers);
+    public DownloadProgressReceiver(DownloadWatcherManager watcherManager) {
+        this.watcherManager = watcherManager;
         bundler = new DownloadableBundler();
     }
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        if (intent.getAction().equals(ProgressUpdater.ACTION.UPDATE.name())) {
-            ProgressValues values = (ProgressValues) intent.getSerializableExtra("values");
-            onUpdate(values);
-            return;
-        }
-
-        if (intent.getAction().equals(ProgressUpdater.ACTION.START.name())) {
-            Bundle downloadable = intent.getBundleExtra("downloadable");
-            onStart(bundler.from(downloadable));
-            return;
-        }
-
-        if (intent.getAction().equals(ProgressUpdater.ACTION.STOP.name())) {
-            onStop(context);
-            return;
-        }
-
+        ProgressUpdater.Action action = ProgressUpdater.Action.valueOf(intent.getAction());
+        handleIntent(context, intent, action);
     }
 
-    private void onUpdate(ProgressValues progressValues) {
-        for (DownloadWatcher downloadWatcher : downloadWatchers) {
-            downloadWatcher.onUpdate(progressValues);
+    private void handleIntent(Context context, Intent intent, ProgressUpdater.Action action) {
+        switch (action) {
+            case UPDATE:
+                handleUpdate(intent);
+                break;
+            case START:
+                handleStart(intent);
+                break;
+            case STOP:
+                handleStop(context);
+                break;
+            default:
+                break;
         }
     }
 
-    private void onStart(Downloadable downloadable) {
-        for (DownloadWatcher downloadWatcher : downloadWatchers) {
-            downloadWatcher.onStart(downloadable);
-        }
+    private void handleStart(Intent intent) {
+        Bundle downloadable = intent.getBundleExtra("downloadable");
+        watcherManager.onStart(bundler.from(downloadable));
     }
 
-    private void onStop(Context context) {
-        for (DownloadWatcher downloadWatcher : downloadWatchers) {
-            downloadWatcher.onStop();
-        }
+
+    private void handleUpdate(Intent intent) {
+        ProgressValues values = (ProgressValues) intent.getSerializableExtra("values");
+        watcherManager.onUpdate(values);
+    }
+
+    private void handleStop(Context context) {
+        watcherManager.onStop();
+        unregister(context);
+    }
+
+    private void unregister(Context context) {
         context.getApplicationContext().unregisterReceiver(this);
     }
 
@@ -69,7 +68,7 @@ public class DownloadProgressReceiver extends BroadcastReceiver {
 
     private IntentFilter getIntentFilter() {
         IntentFilter intentFilter = new IntentFilter();
-        for (ProgressUpdater.ACTION action : ProgressUpdater.ACTION.values()) {
+        for (ProgressUpdater.Action action : ProgressUpdater.Action.values()) {
             intentFilter.addAction(action.name());
         }
         return intentFilter;
