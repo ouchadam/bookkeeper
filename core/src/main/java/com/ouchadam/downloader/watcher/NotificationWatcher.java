@@ -1,6 +1,5 @@
 package com.ouchadam.downloader.watcher;
 
-import android.R;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.content.Context;
@@ -8,6 +7,8 @@ import android.content.Context;
 import com.ouchadam.downloader.DownloadWatcher;
 import com.ouchadam.downloader.Downloadable;
 import com.ouchadam.downloader.ProgressValues;
+
+import static android.R.drawable.stat_notify_sync_noanim;
 
 public class NotificationWatcher implements DownloadWatcher {
 
@@ -30,7 +31,7 @@ public class NotificationWatcher implements DownloadWatcher {
     }
 
     protected Notification.Builder initNotification(Downloadable downloadable, Notification.Builder notification) {
-        notification.setSmallIcon(R.drawable.stat_notify_sync_noanim);
+        notification.setSmallIcon(stat_notify_sync_noanim);
         notification.setAutoCancel(true);
         notification.setContentTitle(downloadable.title());
         notification.setOngoing(true);

@@ -41,5 +41,5 @@ public class ProgressUpdater {
     private void sendBroadcast(Intent intent) {
         context.sendBroadcast(intent);
     }
-    
+
 }
