@@ -1,4 +1,4 @@
-package com.ouchadam.downloader;
+package com.ouchadam.bookkeeper;
 
 import android.content.Context;
 import android.content.Intent;

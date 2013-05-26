@@ -1,4 +1,4 @@
-package com.ouchadam.downloader;
+package com.ouchadam.bookkeeper;
 
 import java.io.Serializable;
 

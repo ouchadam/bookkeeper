@@ -1,4 +1,4 @@
-package com.ouchadam.downloader;
+package com.ouchadam.bookkeeper;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -6,8 +6,8 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
 
-import com.ouchadam.downloader.bundle.Bundler;
-import com.ouchadam.downloader.bundle.DownloadableBundler;
+import com.ouchadam.bookkeeper.bundle.DownloadableBundler;
+import com.ouchadam.bookkeeper.bundle.Bundler;
 
 public class DownloadProgressReceiver extends BroadcastReceiver {
 

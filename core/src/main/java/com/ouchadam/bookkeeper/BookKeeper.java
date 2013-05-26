@@ -1,16 +1,16 @@
-package com.ouchadam.downloader;
+package com.ouchadam.bookkeeper;
 
 import android.content.Context;
 import android.content.Intent;
 
-import com.ouchadam.downloader.bundle.Bundler;
-import com.ouchadam.downloader.bundle.DownloadableBundler;
+import com.ouchadam.bookkeeper.bundle.Bundler;
+import com.ouchadam.bookkeeper.bundle.DownloadableBundler;
 
-public class Downloader {
+public class BookKeeper {
 
     static final String BUNDLE = "bundle";
 
-    public static void download(Context context, Downloadable downloadable, DownloadWatcher... downloadWatchers) {
+    public static void keep(Context context, Downloadable downloadable, DownloadWatcher... downloadWatchers) {
         initProgressReciever(context, downloadWatchers);
         startDownloadService(context, downloadable);
     }

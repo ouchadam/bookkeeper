@@ -11,11 +11,9 @@
         android:layout_height="wrap_content"
         android:text="Start a download!" />
 
-    <ProgressBar
-        android:id="@+id/progress_bar"
-        style="@android:style/Widget.Holo.Light.ProgressBar.Horizontal"
+    <ListView
+        android:id="@+id/list_view"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:visibility="gone"/>
+        android:layout_height="match_parent"/>
 
 </LinearLayout>

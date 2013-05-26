@@ -1,12 +1,12 @@
-package com.ouchadam.downloader.watcher;
+package com.ouchadam.bookkeeper.watcher;
 
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.content.Context;
 
-import com.ouchadam.downloader.DownloadWatcher;
-import com.ouchadam.downloader.Downloadable;
-import com.ouchadam.downloader.ProgressValues;
+import com.ouchadam.bookkeeper.DownloadWatcher;
+import com.ouchadam.bookkeeper.Downloadable;
+import com.ouchadam.bookkeeper.ProgressValues;
 
 import static android.R.drawable.stat_notify_sync_noanim;
 

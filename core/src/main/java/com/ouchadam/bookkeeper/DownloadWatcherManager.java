@@ -1,6 +1,4 @@
-package com.ouchadam.downloader;
-
-import android.content.Context;
+package com.ouchadam.bookkeeper;
 
 import java.util.Arrays;
 import java.util.List;

@@ -2,9 +2,9 @@ package com.example;
 
 import android.view.View;
 import android.widget.ProgressBar;
-import com.ouchadam.downloader.DownloadWatcher;
-import com.ouchadam.downloader.Downloadable;
-import com.ouchadam.downloader.ProgressValues;
+import com.ouchadam.bookkeeper.DownloadWatcher;
+import com.ouchadam.bookkeeper.Downloadable;
+import com.ouchadam.bookkeeper.ProgressValues;
 
 public class ExampleProgressWatcher implements DownloadWatcher {
 

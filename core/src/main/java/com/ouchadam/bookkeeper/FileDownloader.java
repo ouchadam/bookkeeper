@@ -1,4 +1,4 @@
-package com.ouchadam.downloader;
+package com.ouchadam.bookkeeper;
 
 import android.os.Environment;
 
@@ -28,11 +28,10 @@ class FileDownloader {
         this.progressWatcher = progressWatcher;
     }
 
-    public void init(URL fileUrl, String fileName) {
-        setFileName(fileName);
+    public void init(URL fileUrl, File file) {
+        this.file = file;
         try {
             urlConnection = initConnection(fileUrl);
-            file = createFile();
             fileOutput = getFileOutputStream(file);
             inputStream = urlConnection.getInputStream();
             totalSize = urlConnection.getContentLength();
@@ -89,11 +88,6 @@ class FileDownloader {
 
     private FileOutputStream getFileOutputStream(File file) throws FileNotFoundException {
         return new FileOutputStream(file);
-    }
-
-    private File createFile() {
-        File SDCardRoot = Environment.getExternalStorageDirectory();
-        return new File(SDCardRoot, fileName);
     }
 
     private HttpURLConnection initConnection(URL fileUrl) throws IOException {

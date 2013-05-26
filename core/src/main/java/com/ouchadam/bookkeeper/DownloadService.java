@@ -1,11 +1,11 @@
-package com.ouchadam.downloader;
+package com.ouchadam.bookkeeper;
 
 import android.app.IntentService;
 import android.content.Intent;
 import android.os.Bundle;
 
-import com.ouchadam.downloader.bundle.Bundler;
-import com.ouchadam.downloader.bundle.DownloadableBundler;
+import com.ouchadam.bookkeeper.bundle.Bundler;
+import com.ouchadam.bookkeeper.bundle.DownloadableBundler;
 
 public class DownloadService extends IntentService implements FileDownloader.FileDownloadProgressWatcher {
 
@@ -35,12 +35,12 @@ public class DownloadService extends IntentService implements FileDownloader.Fil
     }
 
     private Bundle getBundledDownloadable(Intent intent) {
-        return intent.getBundleExtra(Downloader.BUNDLE);
+        return intent.getBundleExtra(BookKeeper.BUNDLE);
     }
 
     private void downloadFile(Downloadable downloadable) {
         FileDownloader fileDownloader = new FileDownloader(this);
-        fileDownloader.init(downloadable.url(), downloadable.title());
+        fileDownloader.init(downloadable.url(), downloadable.file());
         fileDownloader.downloadFile();
     }
 

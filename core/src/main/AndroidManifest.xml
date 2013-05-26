@@ -13,7 +13,7 @@
 
   <application>
 
-    <service android:name="com.ouchadam.downloader.DownloadService"/>
+    <service android:name="com.ouchadam.bookkeeper.DownloadService"/>
 
   </application>
 

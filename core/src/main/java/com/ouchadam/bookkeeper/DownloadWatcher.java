@@ -1,4 +1,4 @@
-package com.ouchadam.downloader;
+package com.ouchadam.bookkeeper;
 
 public interface DownloadWatcher {
     void onStart(Downloadable downloadable);
