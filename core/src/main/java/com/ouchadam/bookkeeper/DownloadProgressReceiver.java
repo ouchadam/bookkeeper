@@ -12,20 +12,26 @@ import com.ouchadam.bookkeeper.bundle.Bundler;
 public class DownloadProgressReceiver extends BroadcastReceiver {
 
     private final DownloadWatcherManager watcherManager;
+    private DownloadProgressReceiver.OnDownloadFinishedListener downloadFinishedListener;
     private final Bundler<Downloadable> bundler;
 
-    public DownloadProgressReceiver(DownloadWatcherManager watcherManager) {
+    public interface OnDownloadFinishedListener {
+        void onFinish();
+    }
+
+    public DownloadProgressReceiver(DownloadWatcherManager watcherManager, OnDownloadFinishedListener downloadFinishedListener) {
         this.watcherManager = watcherManager;
+        this.downloadFinishedListener = downloadFinishedListener;
         bundler = new DownloadableBundler();
     }
 
     @Override
     public void onReceive(Context context, Intent intent) {
         ProgressUpdater.Action action = ProgressUpdater.Action.valueOf(intent.getAction());
-        handleIntent(context, intent, action);
+        handleIntent(intent, action);
     }
 
-    private void handleIntent(Context context, Intent intent, ProgressUpdater.Action action) {
+    private void handleIntent(Intent intent, ProgressUpdater.Action action) {
         switch (action) {
             case UPDATE:
                 handleUpdate(intent);
@@ -34,7 +40,8 @@ public class DownloadProgressReceiver extends BroadcastReceiver {
                 handleStart(intent);
                 break;
             case STOP:
-                handleStop(context);
+                handleStop();
+                downloadFinishedListener.onFinish();
                 break;
             default:
                 break;
@@ -51,13 +58,17 @@ public class DownloadProgressReceiver extends BroadcastReceiver {
         watcherManager.onUpdate(values);
     }
 
-    private void handleStop(Context context) {
+    private void handleStop() {
         watcherManager.onStop();
-        unregister(context);
     }
 
-    private void unregister(Context context) {
-        context.getApplicationContext().unregisterReceiver(this);
+    public void unregister(Context context) {
+        try {
+            context.getApplicationContext().unregisterReceiver(this);
+        } catch (IllegalArgumentException e) {
+            // TODO : receiver has already been unregistered
+            e.printStackTrace();
+        }
     }
 
     public void register(Context context) {

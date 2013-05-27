@@ -18,7 +18,6 @@ class FileDownloader {
     private File file;
     private FileOutputStream fileOutput;
     private InputStream inputStream;
-    private String fileName;
 
     public interface FileDownloadProgressWatcher {
         void onUpdate(ProgressValues progressValues);
@@ -38,17 +37,6 @@ class FileDownloader {
         } catch (Exception e) {
             e.printStackTrace();
             throw new RuntimeException("Exception in the init");
-        }
-    }
-
-    private void setFileName(String fileName) {
-        validate(fileName);
-        this.fileName = fileName;
-    }
-
-    private void validate(String fileName) {
-        if (fileName == null) {
-            throw new NullPointerException("File name cannot be null");
         }
     }
 
@@ -75,8 +63,8 @@ class FileDownloader {
         progressWatcher.onUpdate(progressValues);
     }
 
-    private int getDownloadedPercentage(int downloadedSize) {
-        float percent = ((float) downloadedSize / totalSize) * 100;
+    private int getDownloadedPercentage(float downloadedSize) {
+        float percent = (downloadedSize / (float) totalSize) * 100f;
         return (int) percent;
     }
 

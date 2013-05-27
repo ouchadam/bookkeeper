@@ -21,7 +21,11 @@ public class ExampleDownloadable implements Downloadable {
 
     private File createFile(String filename) {
         File SDCardRoot = Environment.getExternalStorageDirectory();
-        return new File(SDCardRoot, filename);
+        File file = new File(SDCardRoot, filename);
+        if (file.exists()) {
+            file.delete();
+        }
+        return file;
     }
 
     @Override

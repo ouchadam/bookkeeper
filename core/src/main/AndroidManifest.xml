@@ -2,7 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
   android:versionCode="1"
   android:versionName="0.1"
-  package="com.ouchadam.downloader">
+  package="com.ouchadam.bookkeeper">
 
   <uses-sdk
     android:minSdkVersion="14"

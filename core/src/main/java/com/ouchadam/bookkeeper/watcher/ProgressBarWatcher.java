@@ -1,4 +1,4 @@
-package com.example;
+package com.ouchadam.bookkeeper.watcher;
 
 import android.view.View;
 import android.widget.ProgressBar;
@@ -6,12 +6,19 @@ import com.ouchadam.bookkeeper.DownloadWatcher;
 import com.ouchadam.bookkeeper.Downloadable;
 import com.ouchadam.bookkeeper.ProgressValues;
 
-public class ExampleProgressWatcher implements DownloadWatcher {
+public class ProgressBarWatcher implements DownloadWatcher {
 
     private final ProgressBar progressBar;
 
-    public ExampleProgressWatcher(ProgressBar progressBar) {
+    public ProgressBarWatcher(ProgressBar progressBar) {
+        validate(progressBar);
         this.progressBar = progressBar;
+    }
+
+    private void validate(ProgressBar progressBar) {
+        if (progressBar == null) {
+            throw new NullPointerException("Progress bar is null");
+        }
     }
 
     @Override
@@ -23,6 +30,7 @@ public class ExampleProgressWatcher implements DownloadWatcher {
 
     @Override
     public void onUpdate(ProgressValues progressValues) {
+        progressBar.setVisibility(View.VISIBLE);
         progressBar.setProgress(progressValues.getPercentage());
     }
 
