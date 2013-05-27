@@ -2,9 +2,8 @@ package com.example;
 
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.ProgressBar;
 import android.widget.TextView;
-import com.ouchadam.bookkeeper.ProgressValues;
+import com.ouchadam.bookkeeper.progress.ProgressValues;
 import com.ouchadam.bookkeeper.watcher.adapter.DownloadableListAdapter;
 
 import java.util.List;

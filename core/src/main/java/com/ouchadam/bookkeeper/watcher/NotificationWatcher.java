@@ -6,7 +6,7 @@ import android.content.Context;
 
 import com.ouchadam.bookkeeper.DownloadWatcher;
 import com.ouchadam.bookkeeper.Downloadable;
-import com.ouchadam.bookkeeper.ProgressValues;
+import com.ouchadam.bookkeeper.progress.ProgressValues;
 
 import static android.R.drawable.stat_notify_sync_noanim;
 

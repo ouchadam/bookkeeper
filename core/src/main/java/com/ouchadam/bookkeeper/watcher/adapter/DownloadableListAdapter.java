@@ -5,9 +5,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ProgressBar;
-import com.ouchadam.bookkeeper.ProgressValues;
+import com.ouchadam.bookkeeper.progress.ProgressValues;
 
-import java.security.PublicKey;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;

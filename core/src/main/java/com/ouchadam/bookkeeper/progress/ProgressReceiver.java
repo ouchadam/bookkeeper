@@ -1,4 +1,4 @@
-package com.ouchadam.bookkeeper;
+package com.ouchadam.bookkeeper.progress;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -6,20 +6,22 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
 
+import com.ouchadam.bookkeeper.DownloadWatcherManager;
+import com.ouchadam.bookkeeper.Downloadable;
 import com.ouchadam.bookkeeper.bundle.DownloadableBundler;
 import com.ouchadam.bookkeeper.bundle.Bundler;
 
-public class DownloadProgressReceiver extends BroadcastReceiver {
+public class ProgressReceiver extends BroadcastReceiver {
 
     private final DownloadWatcherManager watcherManager;
-    private DownloadProgressReceiver.OnDownloadFinishedListener downloadFinishedListener;
+    private ProgressReceiver.OnDownloadFinishedListener downloadFinishedListener;
     private final Bundler<Downloadable> bundler;
 
     public interface OnDownloadFinishedListener {
         void onFinish();
     }
 
-    public DownloadProgressReceiver(DownloadWatcherManager watcherManager, OnDownloadFinishedListener downloadFinishedListener) {
+    public ProgressReceiver(DownloadWatcherManager watcherManager, OnDownloadFinishedListener downloadFinishedListener) {
         this.watcherManager = watcherManager;
         this.downloadFinishedListener = downloadFinishedListener;
         bundler = new DownloadableBundler();

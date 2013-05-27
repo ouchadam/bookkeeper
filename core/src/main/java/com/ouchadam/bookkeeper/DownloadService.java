@@ -6,12 +6,17 @@ import android.os.Bundle;
 
 import com.ouchadam.bookkeeper.bundle.Bundler;
 import com.ouchadam.bookkeeper.bundle.DownloadableBundler;
+import com.ouchadam.bookkeeper.progress.ProgressUpdater;
+import com.ouchadam.bookkeeper.progress.ProgressValues;
 
 public class DownloadService extends IntentService implements FileDownloader.FileDownloadProgressWatcher {
 
+    private static final int MAX_RETRIES = 1;
     private final Bundler<Downloadable> bundler;
+
     private int previousPercentage = 0;
     private ProgressUpdater progressUpdater;
+    private int retries = 0;
 
     public DownloadService() {
         super(DownloadService.class.getSimpleName());
@@ -40,8 +45,23 @@ public class DownloadService extends IntentService implements FileDownloader.Fil
 
     private void downloadFile(Downloadable downloadable) {
         FileDownloader fileDownloader = new FileDownloader(this);
-        fileDownloader.init(downloadable.url(), downloadable.file());
-        fileDownloader.downloadFile();
+        try {
+            fileDownloader.download(downloadable.url(), downloadable.file());
+        } catch (FileDownloader.FileDownloadException e) {
+            e.printStackTrace();
+            retry(downloadable);
+        }
+    }
+
+    private void retry(Downloadable downloadable) {
+        if (canRetry()) {
+            retries ++;
+            downloadFile(downloadable);
+        }
+    }
+
+    private boolean canRetry() {
+        return retries < MAX_RETRIES;
     }
 
     @Override

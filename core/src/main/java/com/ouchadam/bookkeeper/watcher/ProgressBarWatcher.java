@@ -4,7 +4,7 @@ import android.view.View;
 import android.widget.ProgressBar;
 import com.ouchadam.bookkeeper.DownloadWatcher;
 import com.ouchadam.bookkeeper.Downloadable;
-import com.ouchadam.bookkeeper.ProgressValues;
+import com.ouchadam.bookkeeper.progress.ProgressValues;
 
 public class ProgressBarWatcher implements DownloadWatcher {
 

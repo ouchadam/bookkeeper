@@ -18,16 +18,12 @@ public class KeeperQueue {
         queue.push(new QueuedKeep(downloadable, downloadWatcherList));
     }
 
-    private QueuedKeep peek() {
-        return queue.peek();
-    }
-
     public QueuedKeep pop() {
         return queue.pop();
     }
 
     public boolean hasNext() {
-        return peek() != null;
+        return !queue.isEmpty();
     }
 
     public static class QueuedKeep {
@@ -47,6 +43,7 @@ public class KeeperQueue {
         public List<DownloadWatcher> getDownloadWatchers() {
             return downloadWatchers;
         }
+
     }
 
 }

@@ -1,4 +1,4 @@
-package com.ouchadam.bookkeeper;
+package com.ouchadam.bookkeeper.progress;
 
 import android.content.Context;
 import android.content.Intent;

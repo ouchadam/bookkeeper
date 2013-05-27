@@ -5,19 +5,20 @@ import android.content.Intent;
 
 import com.ouchadam.bookkeeper.bundle.Bundler;
 import com.ouchadam.bookkeeper.bundle.DownloadableBundler;
+import com.ouchadam.bookkeeper.progress.ProgressReceiver;
 import com.ouchadam.bookkeeper.queue.KeeperQueue;
 import com.ouchadam.bookkeeper.util.ServiceUtil;
 
 import java.util.Arrays;
 import java.util.List;
 
-import static com.ouchadam.bookkeeper.DownloadProgressReceiver.OnDownloadFinishedListener;
+import static com.ouchadam.bookkeeper.progress.ProgressReceiver.OnDownloadFinishedListener;
 
 public class BookKeeper {
 
     static final String BUNDLE = "bundle";
 
-    private DownloadProgressReceiver downloadProgressReceiver;
+    private ProgressReceiver progressReceiver;
     private Context context;
     private DownloadWatcherManager downloadWatcherManager;
     private final KeeperQueue keeperQueue;
@@ -52,22 +53,6 @@ public class BookKeeper {
         startDownloadService(downloadable);
     }
 
-    private void initProgressReciever(DownloadWatcherManager downloadWatcherManager) {
-        downloadProgressReceiver = new DownloadProgressReceiver(downloadWatcherManager, onDownloadFinishedListener);
-        downloadProgressReceiver.register(context);
-    }
-
-    private final OnDownloadFinishedListener onDownloadFinishedListener = new OnDownloadFinishedListener() {
-        @Override
-        public void onFinish() {
-            if (keeperQueue.hasNext()) {
-                keep(keeperQueue.pop());
-            } else {
-                detach();
-            }
-        }
-    };
-
     private void startDownloadService(Downloadable downloadable) {
         Intent service = createServiceIntent(downloadable);
         context.startService(service);
@@ -98,14 +83,30 @@ public class BookKeeper {
         downloadWatcherManager.addWatcher(downloadWatcher);
     }
 
+    private void initProgressReciever(DownloadWatcherManager downloadWatcherManager) {
+        progressReceiver = new ProgressReceiver(downloadWatcherManager, onDownloadFinishedListener);
+        progressReceiver.register(context);
+    }
+
+    private final OnDownloadFinishedListener onDownloadFinishedListener = new OnDownloadFinishedListener() {
+        @Override
+        public void onFinish() {
+            if (keeperQueue.hasNext()) {
+                keep(keeperQueue.pop());
+            } else {
+                detach();
+            }
+        }
+    };
+
     public void detach() {
-        if (downloadProgressReceiver != null) {
+        if (progressReceiver != null) {
             try {
-                downloadProgressReceiver.unregister(context);
+                progressReceiver.unregister(context);
             } catch (IllegalArgumentException e) {
                 e.printStackTrace();
             }
-            downloadProgressReceiver = null;
+            progressReceiver = null;
         }
     }
 

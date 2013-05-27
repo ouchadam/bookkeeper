@@ -1,5 +1,7 @@
 package com.ouchadam.bookkeeper;
 
+import com.ouchadam.bookkeeper.progress.ProgressValues;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -10,10 +12,6 @@ public class DownloadWatcherManager {
 
     public DownloadWatcherManager() {
         this(new ArrayList<DownloadWatcher>());
-    }
-
-    public DownloadWatcherManager(DownloadWatcher... downloadWatchers) {
-        this(Arrays.asList(downloadWatchers));
     }
 
     private DownloadWatcherManager(List<DownloadWatcher> downloadWatchers) {
