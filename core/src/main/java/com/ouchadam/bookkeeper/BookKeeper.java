@@ -5,7 +5,11 @@ import android.content.Intent;
 
 import com.ouchadam.bookkeeper.bundle.Bundler;
 import com.ouchadam.bookkeeper.bundle.DownloadableBundler;
+import com.ouchadam.bookkeeper.queue.KeeperQueue;
 import com.ouchadam.bookkeeper.util.ServiceUtil;
+
+import java.util.Arrays;
+import java.util.List;
 
 import static com.ouchadam.bookkeeper.DownloadProgressReceiver.OnDownloadFinishedListener;
 
@@ -16,10 +20,12 @@ public class BookKeeper {
     private DownloadProgressReceiver downloadProgressReceiver;
     private Context context;
     private DownloadWatcherManager downloadWatcherManager;
+    private final KeeperQueue keeperQueue;
 
     public BookKeeper(Context context) {
         this.context = context;
         downloadWatcherManager = new DownloadWatcherManager();
+        keeperQueue = new KeeperQueue();
     }
 
     public boolean serviceIsRunning() {
@@ -27,10 +33,23 @@ public class BookKeeper {
     }
 
     public void keep(Downloadable downloadable, DownloadWatcher... downloadWatchers) {
+        keep(downloadable, Arrays.asList(downloadWatchers));
+    }
+
+    public void keep(Downloadable downloadable, List<DownloadWatcher> downloadWatchers) {
+        keeperQueue.push(downloadable, downloadWatchers);
         if (!serviceIsRunning()) {
-            attachWatchers(downloadable, downloadWatchers);
-            startDownloadService(downloadable);
+            keep(keeperQueue.pop());
         }
+    }
+
+    private void keep(KeeperQueue.QueuedKeep queuedKeep) {
+        startDownload(queuedKeep.getDownloadable(), queuedKeep.getDownloadWatchers());
+    }
+
+    private void startDownload(Downloadable downloadable, List<DownloadWatcher> downloadWatchers) {
+        attachWatchers(downloadable, downloadWatchers);
+        startDownloadService(downloadable);
     }
 
     private void initProgressReciever(DownloadWatcherManager downloadWatcherManager) {
@@ -41,7 +60,11 @@ public class BookKeeper {
     private final OnDownloadFinishedListener onDownloadFinishedListener = new OnDownloadFinishedListener() {
         @Override
         public void onFinish() {
-            detach();
+            if (keeperQueue.hasNext()) {
+                keep(keeperQueue.pop());
+            } else {
+                detach();
+            }
         }
     };
 
@@ -58,6 +81,10 @@ public class BookKeeper {
     }
 
     public void attachWatchers(Downloadable downloadable, DownloadWatcher... downloadWatchers) {
+        attachWatchers(downloadable, Arrays.asList(downloadWatchers));
+    }
+
+    public void attachWatchers(Downloadable downloadable, List<DownloadWatcher> downloadWatchers) {
         for (DownloadWatcher downloadWatcher : downloadWatchers) {
             attachWatcher(downloadable, downloadWatcher);
         }
@@ -75,7 +102,7 @@ public class BookKeeper {
         if (downloadProgressReceiver != null) {
             try {
                 downloadProgressReceiver.unregister(context);
-            } catch (IllegalArgumentException e)  {
+            } catch (IllegalArgumentException e) {
                 e.printStackTrace();
             }
             downloadProgressReceiver = null;
