@@ -2,7 +2,18 @@ apply plugin: 'android-library'
 
 android {
 
-    compileSdkVersion 17
-    buildToolsVersion "17"
+    compileSdkVersion 18
+    buildToolsVersion "18"
 
+}
+
+apply plugin: 'maven'
+
+
+uploadArchives {
+    repositories {
+        mavenDeployer {
+            repository(url: "file://home/adam/public-mvn-repo/releases")
+        }
+    }
 }

@@ -55,7 +55,6 @@ class FileDownloader {
         HttpURLConnection urlConnection = (HttpURLConnection) fileUrl.openConnection();
 
         urlConnection.setRequestMethod("GET");
-        urlConnection.setDoOutput(true);
 
         urlConnection.connect();
         return urlConnection;

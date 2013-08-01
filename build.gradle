@@ -3,14 +3,16 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:0.4'
+        classpath 'com.android.tools.build:gradle:0.5.4'
     }
 }
 
 allprojects {
-    version = '0.1'
+    version = '0.1-alpha'
+    group = 'com.ouchadam.bookkeeper'
 
     repositories {
         mavenCentral()
     }
+
 }
