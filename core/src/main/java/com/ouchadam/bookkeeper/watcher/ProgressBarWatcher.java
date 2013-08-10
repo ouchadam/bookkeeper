@@ -2,15 +2,15 @@ package com.ouchadam.bookkeeper.watcher;
 
 import android.view.View;
 import android.widget.ProgressBar;
-import com.ouchadam.bookkeeper.DownloadWatcher;
-import com.ouchadam.bookkeeper.Downloadable;
 import com.ouchadam.bookkeeper.progress.ProgressValues;
 
 public class ProgressBarWatcher implements DownloadWatcher {
 
     private final ProgressBar progressBar;
+    private final long downloadId;
 
-    public ProgressBarWatcher(ProgressBar progressBar) {
+    public ProgressBarWatcher(ProgressBar progressBar, long downloadId) {
+        this.downloadId = downloadId;
         validate(progressBar);
         this.progressBar = progressBar;
     }
@@ -22,7 +22,12 @@ public class ProgressBarWatcher implements DownloadWatcher {
     }
 
     @Override
-    public void onStart(Downloadable downloadable) {
+    public boolean isWatching(long downloadId) {
+        return this.downloadId == downloadId;
+    }
+
+    @Override
+    public void onStart() {
         progressBar.setVisibility(View.VISIBLE);
         progressBar.setMax(100);
         progressBar.setProgress(0);

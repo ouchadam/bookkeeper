@@ -4,85 +4,76 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ListView;
-import android.widget.ProgressBar;
+import com.ouchadam.bookkeeper.BasicBookKeeper;
 import com.ouchadam.bookkeeper.BookKeeper;
-import com.ouchadam.bookkeeper.DownloadWatcher;
 import com.ouchadam.bookkeeper.Downloadable;
-import com.ouchadam.bookkeeper.watcher.NotificationWatcher;
+import com.ouchadam.bookkeeper.progress.OnDownloadFinishedListener;
 import com.ouchadam.bookkeeper.watcher.ListItemWatcher;
-import com.ouchadam.bookkeeper.watcher.ProgressBarWatcher;
+import com.ouchadam.bookkeeper.watcher.NotificationWatcher;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
-public class DemoActivity extends Activity implements View.OnClickListener {
+public class DemoActivity extends Activity implements AdapterView.OnItemClickListener {
 
     private ExampleListAdapter adapter;
-    private ListView listView;
-
     private BookKeeper bookKeeper;
+    private IdManager idManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
         initViews();
+        idManager = new IdManager(savedInstanceState);
+        bookKeeper = BasicBookKeeper.newInstance(this, idManager);
+        idManager.restore(restorer);
+    }
+
+    private ListItemWatcher getListItemWatcher(long itemId, long downloadId) {
+        return new ListItemWatcher(adapter, itemId, downloadId);
     }
 
     private void initViews() {
-        findViewById(R.id.download_start).setOnClickListener(this);
         initList();
     }
 
     private void initList() {
-        listView = (ListView) findViewById(R.id.list_view);
-        List<String> data = createAdapterData();
-        adapter = new ExampleListAdapter(R.layout.list_item, R.id.list_item_progress_bar, LayoutInflater.from(this), data);
+        ListView listView = (ListView) findViewById(R.id.list_view);
+        adapter = new ExampleListAdapter(LayoutInflater.from(this), createAdapterData());
         listView.setAdapter(adapter);
+        listView.setOnItemClickListener(this);
     }
 
-    private List<String> createAdapterData() {
-        List<String> data = new ArrayList<String>();
-        data.add("item one");
-        data.add("item 2");
+    private List<SimpleItem> createAdapterData() {
+        List<SimpleItem> data = new ArrayList<SimpleItem>();
+        data.add(new SimpleItem("item one", "http://ipv4.download.thinkbroadband.com/5MB.zip"));
+        data.add(new SimpleItem("item 2", "http://ipv4.download.thinkbroadband.com/5MB.zip"));
         return data;
     }
 
     @Override
-    protected void onResume() {
-        super.onResume();
-        initBookKeeper();
-    }
-
-    private void initBookKeeper() {
-        bookKeeper = new BookKeeper(this);
-        if (bookKeeper.serviceIsRunning()) {
-            bookKeeper.attachWatchers(getDownloadable(), getWatchers());
-        }
+    public void onItemClick(AdapterView<?> adapterView, View view, int position, long itemId) {
+        SimpleItem item = adapter.getItem(position);
+        Downloadable downloadable = new ExampleDownloadable(item);
+        long downloadId = bookKeeper.keep(downloadable);
+        idManager.addWithPosition(downloadId, position);
+        bookKeeper.watch(downloadId, new NotificationWatcher(this, downloadable, downloadId), getListItemWatcher(itemId, downloadId));
     }
 
     @Override
-    public void onClick(View v) {
-        bookKeeper.keep(getDownloadable(), getWatchers());
+    protected void onSaveInstanceState(Bundle outState) {
+        idManager.save(outState);
+        super.onSaveInstanceState(outState);
     }
 
-    private ProgressBar getProgressBar() {
-        return (ProgressBar) findViewById(R.id.main_progress_bar);
-    }
-
-    private Downloadable getDownloadable() {
-        Downloadable downloadable = new ExampleDownloadable();
-        return downloadable;
-    }
-
-    private DownloadWatcher[] getWatchers() {
-        DownloadWatcher[] downloadWatchers = new DownloadWatcher[3];
-        downloadWatchers[0] = new NotificationWatcher(this);
-        downloadWatchers[1] = new ListItemWatcher(adapter, adapter.getItemId(0));
-        downloadWatchers[2] = new ProgressBarWatcher(getProgressBar());
-        return downloadWatchers;
-    }
+    private final IdManager.BookKeeperRestorer restorer = new IdManager.BookKeeperRestorer() {
+        @Override
+        public void onRestore(long downloadId, int position) {
+            bookKeeper.watch(downloadId, getListItemWatcher(adapter.getItemId(position), downloadId));
+        }
+    };
 
 }
 

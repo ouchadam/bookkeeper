@@ -1,10 +1,14 @@
 package com.ouchadam.bookkeeper;
 
+import android.net.Uri;
+
 import java.io.File;
+import java.io.Serializable;
 import java.net.URL;
 
-public interface Downloadable {
+public interface  Downloadable {
     String title();
-    File file();
-    URL url();
+    String description();
+    String fileName();
+    Uri url();
 }

@@ -1,9 +1,10 @@
-package com.ouchadam.bookkeeper;
+package com.ouchadam.bookkeeper.watcher;
 
 import com.ouchadam.bookkeeper.progress.ProgressValues;
 
 public interface DownloadWatcher {
-    void onStart(Downloadable downloadable);
+    boolean isWatching(long downloadId);
+    void onStart();
     void onUpdate(ProgressValues progressValues);
     void onStop();
 }

@@ -4,78 +4,67 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.os.Bundle;
-
+import android.util.Log;
 import com.ouchadam.bookkeeper.DownloadWatcherManager;
-import com.ouchadam.bookkeeper.Downloadable;
-import com.ouchadam.bookkeeper.bundle.DownloadableBundler;
-import com.ouchadam.bookkeeper.bundle.Bundler;
 
 public class ProgressReceiver extends BroadcastReceiver {
 
     private final DownloadWatcherManager watcherManager;
-    private ProgressReceiver.OnDownloadFinishedListener downloadFinishedListener;
-    private final Bundler<Downloadable> bundler;
+    private OnDownloadFinishedListener downloadFinishedListener;
+    private OnAllDownloadsFinished onAllDownloadsFinished;
 
-    public interface OnDownloadFinishedListener {
-        void onFinish();
-    }
-
-    public ProgressReceiver(DownloadWatcherManager watcherManager, OnDownloadFinishedListener downloadFinishedListener) {
+    public ProgressReceiver(DownloadWatcherManager watcherManager, OnDownloadFinishedListener downloadFinishedListener, OnAllDownloadsFinished onAllDownloadsFinished) {
         this.watcherManager = watcherManager;
         this.downloadFinishedListener = downloadFinishedListener;
-        bundler = new DownloadableBundler();
+        this.onAllDownloadsFinished = onAllDownloadsFinished;
     }
 
     @Override
     public void onReceive(Context context, Intent intent) {
         ProgressUpdater.Action action = ProgressUpdater.Action.valueOf(intent.getAction());
-        handleIntent(intent, action);
+        long downloadId = intent.getLongExtra("test3", -1l);
+        Log.e("!!!", "!!! : onReceive : action : " + action + " id : " + downloadId);
+        handleIntent(downloadId, intent, action);
     }
 
-    private void handleIntent(Intent intent, ProgressUpdater.Action action) {
+    private void handleIntent(long downloadId, Intent intent, ProgressUpdater.Action action) {
         switch (action) {
             case UPDATE:
-                handleUpdate(intent);
-                break;
-            case START:
-                handleStart(intent);
+                handleUpdate(downloadId, intent);
                 break;
             case STOP:
-                handleStop();
-                downloadFinishedListener.onFinish();
+                handleStop(downloadId);
+                downloadFinishedListener.onFinish(downloadId);
+                break;
+            case ALL_DOWNLOADS_FINISHED:
+                onAllDownloadsFinished.onAllFinished();
                 break;
             default:
                 break;
         }
     }
 
-    private void handleStart(Intent intent) {
-        Bundle downloadable = intent.getBundleExtra(ProgressUpdater.DOWNLOADABLE);
-        watcherManager.onStart(bundler.from(downloadable));
-    }
-
-    private void handleUpdate(Intent intent) {
+    private void handleUpdate(long downloadId, Intent intent) {
         ProgressValues values = (ProgressValues) intent.getSerializableExtra(ProgressUpdater.PROGRESS_VALUES);
-        watcherManager.onUpdate(values);
+        watcherManager.onUpdate(downloadId, values);
     }
 
-    private void handleStop() {
-        watcherManager.onStop();
-    }
-
-    public void unregister(Context context) {
-        try {
-            context.getApplicationContext().unregisterReceiver(this);
-        } catch (IllegalArgumentException e) {
-            // TODO : receiver has already been unregistered
-            e.printStackTrace();
-        }
+    private void handleStop(long downloadId) {
+        watcherManager.onStop(downloadId);
     }
 
     public void register(Context context) {
         IntentFilter intentFilter = getIntentFilter();
-        context.getApplicationContext().registerReceiver(this, intentFilter);
+        context.registerReceiver(this, intentFilter);
+    }
+
+    public void unregister(Context context) {
+        try {
+            context.unregisterReceiver(this);
+        } catch (IllegalArgumentException e) {
+            // TODO : receiver has already been unregistered
+            e.printStackTrace();
+        }
     }
 
     private IntentFilter getIntentFilter() {

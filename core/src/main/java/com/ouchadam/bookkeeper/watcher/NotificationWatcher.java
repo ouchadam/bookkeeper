@@ -4,7 +4,6 @@ import android.app.Notification;
 import android.app.NotificationManager;
 import android.content.Context;
 
-import com.ouchadam.bookkeeper.DownloadWatcher;
 import com.ouchadam.bookkeeper.Downloadable;
 import com.ouchadam.bookkeeper.progress.ProgressValues;
 
@@ -12,20 +11,30 @@ import static android.R.drawable.stat_notify_sync_noanim;
 
 public class NotificationWatcher implements DownloadWatcher {
 
-    private static final int NOTIFICATION_ID = 0x6A;
     private static final int PROGRESS_MAX = 100;
     private static final boolean DETERMINATE_PROGRESS = false;
 
     private final NotificationManager notificationManager;
+    private final int notificationId;
     private final Notification.Builder notification;
+    private final Downloadable downloadable;
+    private final long downloadId;
 
-    public NotificationWatcher(Context context) {
+    public NotificationWatcher(Context context, Downloadable downloadable, long downloadId) {
+        this.downloadable = downloadable;
+        this.downloadId = downloadId;
+        this.notificationId = downloadable.fileName().hashCode();
         notification = new Notification.Builder(context);
-        notificationManager = (NotificationManager) context.getApplicationContext().getSystemService(Context.NOTIFICATION_SERVICE);
+        notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
     }
 
     @Override
-    public void onStart(Downloadable downloadable) {
+    public boolean isWatching(long downloadId) {
+        return this.downloadId == downloadId;
+    }
+
+    @Override
+    public void onStart() {
         initNotification(downloadable, notification);
         notifyManager();
     }
@@ -68,7 +77,7 @@ public class NotificationWatcher implements DownloadWatcher {
     }
 
     private void notifyManager() {
-        notificationManager.notify(NOTIFICATION_ID, notification.build());
+        notificationManager.notify(notificationId, notification.build());
     }
 
 }

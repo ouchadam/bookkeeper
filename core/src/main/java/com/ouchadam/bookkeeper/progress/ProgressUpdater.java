@@ -6,35 +6,36 @@ import android.os.Bundle;
 
 public class ProgressUpdater {
 
-    static final String DOWNLOADABLE = "downloadable";
     static final String PROGRESS_VALUES = "values";
 
     private final Context context;
 
     enum Action {
-        START,
         UPDATE,
-        STOP;
+        STOP,
+        ALL_DOWNLOADS_FINISHED;
     }
 
     public ProgressUpdater(Context context) {
         this.context = context.getApplicationContext();
     }
 
-    public void broadcastStart(Bundle bundledDownloadable) {
-        Intent intent = new Intent(Action.START.name());
-        intent.putExtra(DOWNLOADABLE, bundledDownloadable);
-        sendBroadcast(intent);
-    }
-
-    public void broadcastUpdate(ProgressValues progressValues) {
+    public void broadcastUpdate(long downloadId, ProgressValues progressValues) {
         Intent intent = new Intent(Action.UPDATE.name());
+        intent.putExtra("test3", downloadId);
         intent.putExtra(PROGRESS_VALUES, progressValues);
         sendBroadcast(intent);
     }
 
-    public void broadcastFinish() {
+    public void broadcastFinish(long downloadId) {
         Intent intent = new Intent(Action.STOP.name());
+        intent.putExtra("test3", downloadId);
+        sendBroadcast(intent);
+    }
+
+
+    public void broadcastAllDownloadsFinished() {
+        Intent intent = new Intent(Action.ALL_DOWNLOADS_FINISHED.name());
         sendBroadcast(intent);
     }
 

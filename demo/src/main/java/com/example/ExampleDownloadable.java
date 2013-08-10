@@ -1,44 +1,40 @@
 package com.example;
 
+import android.net.Uri;
 import android.os.Environment;
 import com.ouchadam.bookkeeper.Downloadable;
 
 import java.io.File;
 import java.net.MalformedURLException;
+import java.net.URI;
 import java.net.URL;
 
 public class ExampleDownloadable implements Downloadable {
 
+    private final SimpleItem simpleItem;
+
+    public ExampleDownloadable(SimpleItem simpleItem) {
+        this.simpleItem = simpleItem;
+    }
+
     @Override
     public String title() {
-        return "My title";
+        return simpleItem.getTitle();
     }
 
     @Override
-    public File file() {
-        return createFile(title());
-    }
-
-    private File createFile(String filename) {
-        File SDCardRoot = Environment.getExternalStorageDirectory();
-        File file = new File(SDCardRoot, filename);
-        if (file.exists()) {
-            file.delete();
-        }
-        return file;
+    public String description() {
+        return simpleItem.getTitle();
     }
 
     @Override
-    public URL url() {
-        return getUrl();
+    public String fileName() {
+        return title();
     }
 
-    private URL getUrl() {
-        try {
-            return new URL("http://ipv4.download.thinkbroadband.com/5MB.zip");
-        } catch (MalformedURLException e) {
-            throw new RuntimeException("Bad url");
-        }
+    @Override
+    public Uri url() {
+        return Uri.parse(simpleItem.getUrl());
     }
 
 }

@@ -1,14 +1,16 @@
 package com.ouchadam.bookkeeper;
 
+import android.util.Log;
 import com.ouchadam.bookkeeper.progress.ProgressValues;
+import com.ouchadam.bookkeeper.watcher.DownloadWatcher;
 
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 
 public class DownloadWatcherManager {
 
-    private List<DownloadWatcher> downloadWatchers;
+    private final List<DownloadWatcher> downloadWatchers;
 
     public DownloadWatcherManager() {
         this(new ArrayList<DownloadWatcher>());
@@ -22,22 +24,58 @@ public class DownloadWatcherManager {
         downloadWatchers.add(downloadWatcher);
     }
 
-    public void onStart(Downloadable downloadable) {
-        for (DownloadWatcher downloadWatcher : downloadWatchers) {
-            downloadWatcher.onStart(downloadable);
-        }
+    public void onStart(long downloadId) {
+        forEachWithId(onStart, downloadId);
     }
 
-    public void onUpdate(ProgressValues progressValues) {
-        for (DownloadWatcher downloadWatcher : downloadWatchers) {
-            downloadWatcher.onUpdate(progressValues);
+    private final ForEachDownloadWatcher onStart = new ForEachDownloadWatcher() {
+        @Override
+        public void on(DownloadWatcher downloadWatcher) {
+            downloadWatcher.onStart();
         }
+    };
+
+    public void onUpdate(long downloadId, final ProgressValues progressValues) {
+        Log.e("!!!", "!!! : onUpdate");
+        forEachWithId(new ForEachDownloadWatcher() {
+            @Override
+            public void on(DownloadWatcher downloadWatcher) {
+                downloadWatcher.onUpdate(progressValues);
+            }
+        },downloadId);
     }
 
-    public void onStop() {
-        for (DownloadWatcher downloadWatcher : downloadWatchers) {
+    public void onStop(long downloadId) {
+        forEachWithId(onStop, downloadId);
+        cleanWatchers(downloadId);
+    }
+
+    private final ForEachDownloadWatcher onStop = new ForEachDownloadWatcher() {
+        @Override
+        public void on(DownloadWatcher downloadWatcher) {
             downloadWatcher.onStop();
         }
+    };
+
+    private void forEachWithId(ForEachDownloadWatcher forEach, long downloadId) {
+        for (DownloadWatcher downloadWatcher : downloadWatchers) {
+            if (downloadWatcher.isWatching(downloadId)) {
+                forEach.on(downloadWatcher);
+            }
+        }
+    }
+
+    private void cleanWatchers(long downloadId) {
+        Iterator<DownloadWatcher> iterator = downloadWatchers.iterator();
+        while (iterator.hasNext()) {
+            if (iterator.next().isWatching(downloadId)) {
+                iterator.remove();
+            }
+        }
+    }
+
+    private interface ForEachDownloadWatcher {
+        void on(DownloadWatcher downloadWatcher);
     }
 
 }

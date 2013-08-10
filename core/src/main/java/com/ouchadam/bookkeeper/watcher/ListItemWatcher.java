@@ -1,40 +1,51 @@
 package com.ouchadam.bookkeeper.watcher;
 
-import com.ouchadam.bookkeeper.DownloadWatcher;
-import com.ouchadam.bookkeeper.Downloadable;
 import com.ouchadam.bookkeeper.progress.ProgressValues;
-import com.ouchadam.bookkeeper.watcher.adapter.DownloadableListAdapter;
+import com.ouchadam.bookkeeper.watcher.adapter.ListItemProgress;
 
-import static com.ouchadam.bookkeeper.watcher.adapter.DownloadableListAdapter.Stage.*;
+import static com.ouchadam.bookkeeper.watcher.adapter.ListItemProgress.Stage.*;
 
 public class ListItemWatcher implements DownloadWatcher {
 
-    private final DownloadableListAdapter listAdapter;
+    private final ItemWatcher itemWatcher;
     private final long itemId;
+    private long downloadId;
 
-    public ListItemWatcher(DownloadableListAdapter adapter, long itemId) {
-        this.listAdapter = adapter;
+    public interface ItemWatcher {
+        void setStageFor(long itemId, ListItemProgress.Stage stage);
+        void updateProgressValuesFor(long itemId, ProgressValues progressValues);
+        void notifyAdapter();
+    }
+
+    public ListItemWatcher(ItemWatcher itemWatcher, long itemId, long downloadId) {
+        this.itemWatcher = itemWatcher;
         this.itemId = itemId;
-        listAdapter.setStageFor(itemId, IDLE);
+        this.downloadId = downloadId;
+        this.itemWatcher.setStageFor(itemId, IDLE);
     }
 
     @Override
-    public void onStart(Downloadable downloadable) {
-        listAdapter.setStageFor(itemId, START);
-        listAdapter.notifyDataSetChanged();
+    public boolean isWatching(long downloadId) {
+        return this.downloadId == downloadId;
+    }
+
+    @Override
+    public void onStart() {
+        itemWatcher.setStageFor(itemId, START);
+        itemWatcher.notifyAdapter();
     }
 
     @Override
     public void onUpdate(ProgressValues progressValues) {
-        listAdapter.setStageFor(itemId, UPDATING);
-        listAdapter.updateProgressValuesFor(itemId, progressValues);
-        listAdapter.notifyDataSetChanged();
+        itemWatcher.setStageFor(itemId, UPDATING);
+        itemWatcher.updateProgressValuesFor(itemId, progressValues);
+        itemWatcher.notifyAdapter();
     }
 
     @Override
     public void onStop() {
-        listAdapter.setStageFor(itemId, STOP);
-        listAdapter.notifyDataSetChanged();
+        itemWatcher.setStageFor(itemId, STOP);
+        itemWatcher.notifyAdapter();
     }
 
 }

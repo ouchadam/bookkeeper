@@ -2,72 +2,97 @@ package com.example;
 
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.BaseAdapter;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import com.ouchadam.bookkeeper.progress.ProgressValues;
-import com.ouchadam.bookkeeper.watcher.adapter.DownloadableListAdapter;
+import com.ouchadam.bookkeeper.watcher.ListItemWatcher;
+import com.ouchadam.bookkeeper.watcher.adapter.ProgressDelegate;
+import com.ouchadam.bookkeeper.watcher.adapter.TypedBaseAdapter;
 
 import java.util.List;
 
-public class ExampleListAdapter extends DownloadableListAdapter<String, ExampleListAdapter.ViewHolder> {
+import static com.ouchadam.bookkeeper.watcher.adapter.ListItemProgress.Stage;
 
-    private final int itemLayout;
-    private final int progressId;
+public class ExampleListAdapter extends TypedBaseAdapter<SimpleItem> implements ListItemWatcher.ItemWatcher {
 
-    public ExampleListAdapter(int itemLayout, int progressId, LayoutInflater layoutInflater, List<String> data) {
-        super(layoutInflater, data);
-        this.itemLayout = itemLayout;
-        this.progressId = progressId;
+    private final LayoutInflater layoutInflater;
+    private final List<SimpleItem> data;
+    private final ProgressDelegate<ViewHolder> progressDelegate;
+
+    public ExampleListAdapter(LayoutInflater layoutInflater, List<SimpleItem> data) {
+        this.layoutInflater = layoutInflater;
+        this.data = data;
+        this.progressDelegate = new ItemProgressManager(this);
     }
 
     @Override
-    public int getLayoutId() {
-        return itemLayout;
-    }
-
-    @Override
-    public int getProgressId() {
-        return progressId;
-    }
-
-    @Override
-    protected ViewHolder getViewHolder() {
-        return new ViewHolder();
-    }
-
-    @Override
-    protected void findViews(View parent, ViewHolder viewHolder) {
-        viewHolder.textView = (TextView) parent.findViewById(R.id.text_view);
-    }
-
-    @Override
-    protected void onStart(ViewHolder viewHolder) {
-        viewHolder.textView.setText("Download about to start");
-        viewHolder.progressBar.setProgress(0);
-        viewHolder.progressBar.setMax(100);
-        viewHolder.progressBar.setVisibility(View.VISIBLE);
-    }
-
-    @Override
-    protected void onUpdate(ViewHolder viewHolder, ProgressValues progressValues) {
-        viewHolder.textView.setText("Downloading...");
-        viewHolder.progressBar.setProgress(progressValues.getPercentage());
-    }
-
-    @Override
-    protected void onStop(ViewHolder viewHolder) {
-        viewHolder.textView.setText("Download complete");
-        viewHolder.progressBar.setVisibility(View.GONE);
-    }
-
-    @Override
-    protected void onHandleView(Stage stage, int position, ViewHolder viewHolder, String data) {
-        if (stage.equals(Stage.IDLE)) {
-            viewHolder.textView.setText(data);
+    public View getView(int position, View convertView, ViewGroup viewGroup) {
+        View view = createView(convertView, viewGroup);
+        ViewHolder viewHolder = (ViewHolder) view.getTag();
+        progressDelegate.handleDownloadProgress(position, viewHolder);
+        Stage stage = progressDelegate.getStage(position);
+        if (stage == Stage.IDLE) {
+            viewHolder.textView.setText(getItem(position).getTitle());
         }
+        return view;
     }
 
-    public static class ViewHolder extends DownloadableListAdapter.ProgressHolder {
-        private TextView textView;
+    private View createView(View convertView, ViewGroup viewGroup) {
+        return convertView == null ? createNewView(viewGroup) : convertView;
+    }
+
+    private View createNewView(ViewGroup viewGroup) {
+        View newView = layoutInflater.inflate(R.layout.list_item, viewGroup, false);
+        initViewTag(newView);
+        return newView;
+    }
+
+    private void initViewTag(View newView) {
+        ViewHolder tag = new ViewHolder();
+        initHolder(newView, tag);
+        newView.setTag(tag);
+    }
+
+    private void initHolder(View newView, ViewHolder tag) {
+        tag.textView = (TextView) newView.findViewById(R.id.text_view);
+        tag.progressBar = (ProgressBar) newView.findViewById(R.id.list_item_progress_bar);
+    }
+
+    @Override
+    public void setStageFor(long itemId, Stage stage) {
+        progressDelegate.setStageFor(itemId, stage);
+    }
+
+    @Override
+    public void updateProgressValuesFor(long itemId, ProgressValues progressValues) {
+        progressDelegate.updateProgressValuesFor(itemId, progressValues);
+    }
+
+    @Override
+    public void notifyAdapter() {
+        notifyDataSetChanged();
+    }
+
+    @Override
+    public int getCount() {
+        return data.size();
+    }
+
+    @Override
+    public SimpleItem getItem(int i) {
+        return data.get(i);
+    }
+
+    @Override
+    public long getItemId(int i) {
+        return data.get(i).hashCode();
+    }
+
+    public static class ViewHolder {
+        TextView textView;
+        ProgressBar progressBar;
     }
 
 }
