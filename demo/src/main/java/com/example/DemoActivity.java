@@ -9,11 +9,9 @@ import android.widget.ListView;
 import com.ouchadam.bookkeeper.BasicBookKeeper;
 import com.ouchadam.bookkeeper.BookKeeper;
 import com.ouchadam.bookkeeper.Downloadable;
-import com.ouchadam.bookkeeper.progress.OnDownloadFinishedListener;
+import com.ouchadam.bookkeeper.watcher.DownloadWatcher;
 import com.ouchadam.bookkeeper.watcher.ListItemWatcher;
 import com.ouchadam.bookkeeper.watcher.NotificationWatcher;
-
-import java.util.*;
 
 public class DemoActivity extends Activity implements AdapterView.OnItemClickListener {
 
@@ -25,32 +23,17 @@ public class DemoActivity extends Activity implements AdapterView.OnItemClickLis
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
-        initViews();
+        initList();
         idManager = new IdManager(savedInstanceState);
         bookKeeper = BasicBookKeeper.newInstance(this, idManager);
         idManager.restore(restorer);
     }
 
-    private ListItemWatcher getListItemWatcher(long itemId, long downloadId) {
-        return new ListItemWatcher(adapter, itemId, downloadId);
-    }
-
-    private void initViews() {
-        initList();
-    }
-
     private void initList() {
         ListView listView = (ListView) findViewById(R.id.list_view);
-        adapter = new ExampleListAdapter(LayoutInflater.from(this), createAdapterData());
+        adapter = new ExampleListAdapter(LayoutInflater.from(this));
         listView.setAdapter(adapter);
         listView.setOnItemClickListener(this);
-    }
-
-    private List<SimpleItem> createAdapterData() {
-        List<SimpleItem> data = new ArrayList<SimpleItem>();
-        data.add(new SimpleItem("item one", "http://ipv4.download.thinkbroadband.com/5MB.zip"));
-        data.add(new SimpleItem("item 2", "http://ipv4.download.thinkbroadband.com/5MB.zip"));
-        return data;
     }
 
     @Override
@@ -59,7 +42,15 @@ public class DemoActivity extends Activity implements AdapterView.OnItemClickLis
         Downloadable downloadable = new ExampleDownloadable(item);
         long downloadId = bookKeeper.keep(downloadable);
         idManager.addWithPosition(downloadId, position);
-        bookKeeper.watch(downloadId, new NotificationWatcher(this, downloadable, downloadId), getListItemWatcher(itemId, downloadId));
+        bookKeeper.watch(downloadId, getDownloadWatchers(itemId, downloadable, downloadId));
+    }
+
+    private DownloadWatcher[] getDownloadWatchers(long itemId, Downloadable downloadable, long downloadId) {
+        return new DownloadWatcher[]{new NotificationWatcher(this, downloadable, downloadId), getListItemWatcher(itemId, downloadId)};
+    }
+
+    private ListItemWatcher getListItemWatcher(long itemId, long downloadId) {
+        return new ListItemWatcher(adapter, itemId, downloadId);
     }
 
     @Override

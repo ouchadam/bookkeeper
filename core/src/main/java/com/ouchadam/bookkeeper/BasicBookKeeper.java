@@ -13,6 +13,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import com.ouchadam.bookkeeper.progress.OnDownloadFinishedListener;
+import com.ouchadam.bookkeeper.watcher.DownloadWatcherManager;
 
 public class BasicBookKeeper implements BookKeeper, OnDownloadFinishedListener, OnAllDownloadsFinished {
 

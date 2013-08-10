@@ -11,6 +11,7 @@ import com.ouchadam.bookkeeper.watcher.ListItemWatcher;
 import com.ouchadam.bookkeeper.watcher.adapter.ProgressDelegate;
 import com.ouchadam.bookkeeper.watcher.adapter.TypedBaseAdapter;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static com.ouchadam.bookkeeper.watcher.adapter.ListItemProgress.Stage;
@@ -21,10 +22,17 @@ public class ExampleListAdapter extends TypedBaseAdapter<SimpleItem> implements 
     private final List<SimpleItem> data;
     private final ProgressDelegate<ViewHolder> progressDelegate;
 
-    public ExampleListAdapter(LayoutInflater layoutInflater, List<SimpleItem> data) {
+    public ExampleListAdapter(LayoutInflater layoutInflater) {
         this.layoutInflater = layoutInflater;
-        this.data = data;
+        this.data = createAdapterData();
         this.progressDelegate = new ItemProgressManager(this);
+    }
+
+    private static List<SimpleItem> createAdapterData() {
+        List<SimpleItem> data = new ArrayList<SimpleItem>();
+        data.add(new SimpleItem("item one", "http://ipv4.download.thinkbroadband.com/5MB.zip"));
+        data.add(new SimpleItem("item 2", "http://ipv4.download.thinkbroadband.com/5MB.zip"));
+        return data;
     }
 
     @Override
