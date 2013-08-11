@@ -13,7 +13,7 @@ apply plugin: 'maven'
 uploadArchives {
     repositories {
         mavenDeployer {
-            repository(url: "file://home/adam/public-mvn-repo/releases")
+            repository(url: "file://home/adam/.m2/repository/")
         }
     }
 }

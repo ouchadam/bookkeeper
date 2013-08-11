@@ -1,5 +1,6 @@
 package com.ouchadam.bookkeeper.watcher;
 
+import android.util.Log;
 import com.ouchadam.bookkeeper.progress.ProgressValues;
 import com.ouchadam.bookkeeper.watcher.adapter.ListItemProgress;
 

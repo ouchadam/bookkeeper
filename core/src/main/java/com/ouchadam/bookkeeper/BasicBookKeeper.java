@@ -104,6 +104,7 @@ public class BasicBookKeeper implements BookKeeper, OnDownloadFinishedListener, 
 
     @Override
     public void onAllFinished() {
+        downloadWatcherManager.clear();
         detach();
     }
 

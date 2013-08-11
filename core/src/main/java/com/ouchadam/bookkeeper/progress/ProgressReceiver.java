@@ -23,7 +23,6 @@ public class ProgressReceiver extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         ProgressUpdater.Action action = ProgressUpdater.Action.valueOf(intent.getAction());
         long downloadId = intent.getLongExtra("test3", -1l);
-        Log.e("!!!", "!!! : onReceive : action : " + action + " id : " + downloadId);
         handleIntent(downloadId, intent, action);
     }
 

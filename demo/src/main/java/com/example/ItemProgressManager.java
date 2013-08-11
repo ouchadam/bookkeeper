@@ -1,5 +1,6 @@
 package com.example;
 
+import android.util.Log;
 import android.view.View;
 import android.widget.BaseAdapter;
 import com.ouchadam.bookkeeper.progress.ProgressValues;
@@ -14,6 +15,7 @@ class ItemProgressManager extends ListItemProgress<SimpleItem, ExampleListAdapte
 
     @Override
     protected void onStart(SimpleItem what, ExampleListAdapter.ViewHolder viewHolder) {
+        Log.e("!!!", "onStart");
         viewHolder.textView.setText("Download about to start");
         viewHolder.progressBar.setProgress(0);
         viewHolder.progressBar.setMax(100);
