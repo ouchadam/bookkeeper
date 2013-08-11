@@ -7,4 +7,5 @@ public interface BookKeeper {
 
     long keep(Downloadable downloadable);
     void watch(long downloadId, DownloadWatcher... downloadWatchers);
+
 }
