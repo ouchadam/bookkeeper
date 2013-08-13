@@ -9,7 +9,7 @@ import com.ouchadam.bookkeeper.watcher.DownloadWatcherManager;
 
 import java.util.List;
 
-public class FooManager {
+public class BookKeeperDelegate {
 
     private final DownloadEnqueuer downloadEnqueuer;
     private final DownloadWatcherManager downloadWatcherManager;
@@ -17,12 +17,12 @@ public class FooManager {
     private final ProgressReceiverRegisterer progressReceiver;
     private final WatcherServiceStarter watcherService;
 
-    public FooManager(Context context, DownloadEnqueuer downloadEnqueuer, DownloadWatcherManager downloadWatcherManager, IdManager idManager, WatcherServiceStarter watcherService) {
+    public BookKeeperDelegate(Context context, DownloadEnqueuer downloadEnqueuer, DownloadWatcherManager downloadWatcherManager, IdManager idManager, WatcherServiceStarter watcherService) {
         this.downloadEnqueuer = downloadEnqueuer;
         this.downloadWatcherManager = downloadWatcherManager;
         this.idManager = idManager;
         this.watcherService = watcherService;
-        this.progressReceiver = new ProgressReceiverRegisterer(context, new ProgressReceiver(null, downloadFinished, allDownloadsFinished));
+        this.progressReceiver = new ProgressReceiverRegisterer(context, new ProgressReceiver(downloadWatcherManager, downloadFinished, allDownloadsFinished));
     }
 
     private final OnDownloadFinishedListener downloadFinished = new OnDownloadFinishedListener() {
@@ -44,7 +44,14 @@ public class FooManager {
         return new DownloadId(downloadId);
     }
 
-    public void attachWatchers(List<DownloadWatcher> downloadWatchers) {
+    public void startListeningForUpdates(DownloadId downloadId, List<DownloadWatcher> downloadWatchers) {
+        attachWatchers(downloadWatchers);
+        progressReceiver.register();
+        broadcastStart(downloadId);
+        watcherService.startWatching();
+    }
+
+    private void attachWatchers(List<DownloadWatcher> downloadWatchers) {
         for (DownloadWatcher downloadWatcher : downloadWatchers) {
             attachWatcher(downloadWatcher);
         }
@@ -52,12 +59,6 @@ public class FooManager {
 
     private void attachWatcher(DownloadWatcher downloadWatcher) {
         downloadWatcherManager.addWatcher(downloadWatcher);
-    }
-
-    public void startListeningForUpdates(DownloadId downloadId) {
-        progressReceiver.register();
-        broadcastStart(downloadId);
-        watcherService.startWatching();
     }
 
     private void broadcastStart(DownloadId downloadId) {

@@ -11,8 +11,8 @@ import com.ouchadam.bookkeeper.watcher.DownloadWatcherManager;
 public class ProgressReceiver extends BroadcastReceiver {
 
     private final DownloadWatcherManager watcherManager;
-    private OnDownloadFinishedListener downloadFinishedListener;
-    private OnAllDownloadsFinished onAllDownloadsFinished;
+    private final OnDownloadFinishedListener downloadFinishedListener;
+    private final OnAllDownloadsFinished onAllDownloadsFinished;
 
     public ProgressReceiver(DownloadWatcherManager watcherManager, OnDownloadFinishedListener downloadFinishedListener, OnAllDownloadsFinished onAllDownloadsFinished) {
         this.watcherManager = watcherManager;
