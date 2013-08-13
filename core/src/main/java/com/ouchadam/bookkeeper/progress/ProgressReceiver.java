@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.util.Log;
+import com.ouchadam.bookkeeper.DownloadId;
 import com.ouchadam.bookkeeper.watcher.DownloadWatcherManager;
 
 public class ProgressReceiver extends BroadcastReceiver {
@@ -22,11 +23,11 @@ public class ProgressReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         ProgressUpdater.Action action = ProgressUpdater.Action.valueOf(intent.getAction());
-        long downloadId = intent.getLongExtra("test3", -1l);
+        DownloadId downloadId = new DownloadId(intent.getLongExtra("test3", -1l));
         handleIntent(downloadId, intent, action);
     }
 
-    private void handleIntent(long downloadId, Intent intent, ProgressUpdater.Action action) {
+    private void handleIntent(DownloadId downloadId, Intent intent, ProgressUpdater.Action action) {
         switch (action) {
             case UPDATE:
                 handleUpdate(downloadId, intent);
@@ -36,6 +37,7 @@ public class ProgressReceiver extends BroadcastReceiver {
                 downloadFinishedListener.onFinish(downloadId);
                 break;
             case ALL_DOWNLOADS_FINISHED:
+                handleAllDownloadsFinished();
                 onAllDownloadsFinished.onAllFinished();
                 break;
             default:
@@ -43,18 +45,30 @@ public class ProgressReceiver extends BroadcastReceiver {
         }
     }
 
-    private void handleUpdate(long downloadId, Intent intent) {
+    private void handleUpdate(DownloadId downloadId, Intent intent) {
         ProgressValues values = (ProgressValues) intent.getSerializableExtra(ProgressUpdater.PROGRESS_VALUES);
         watcherManager.onUpdate(downloadId, values);
     }
 
-    private void handleStop(long downloadId) {
+    private void handleStop(DownloadId downloadId) {
         watcherManager.onStop(downloadId);
+    }
+
+    private void handleAllDownloadsFinished() {
+        watcherManager.clear();
     }
 
     public void register(Context context) {
         IntentFilter intentFilter = getIntentFilter();
         context.registerReceiver(this, intentFilter);
+    }
+
+    private IntentFilter getIntentFilter() {
+        IntentFilter intentFilter = new IntentFilter();
+        for (ProgressUpdater.Action action : ProgressUpdater.Action.values()) {
+            intentFilter.addAction(action.name());
+        }
+        return intentFilter;
     }
 
     public void unregister(Context context) {
@@ -64,14 +78,6 @@ public class ProgressReceiver extends BroadcastReceiver {
             // TODO : receiver has already been unregistered
             e.printStackTrace();
         }
-    }
-
-    private IntentFilter getIntentFilter() {
-        IntentFilter intentFilter = new IntentFilter();
-        for (ProgressUpdater.Action action : ProgressUpdater.Action.values()) {
-            intentFilter.addAction(action.name());
-        }
-        return intentFilter;
     }
 
 }

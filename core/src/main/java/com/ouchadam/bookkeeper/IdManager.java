@@ -1,8 +1,6 @@
 package com.ouchadam.bookkeeper;
 
 import android.content.SharedPreferences;
-import android.os.Bundle;
-import android.util.Log;
 import com.ouchadam.bookkeeper.progress.OnDownloadFinishedListener;
 
 import java.util.List;
@@ -10,24 +8,24 @@ import java.util.Map;
 
 public class IdManager implements OnDownloadFinishedListener {
 
-    private DownloaderHelper downloaderHelper;
+    private ActiveDownloadFetcher downloaderHelper;
     private final SharedPreferences sharedPreferences;
 
     public interface BookKeeperRestorer {
-        void onRestore(long downloadId, long itemId);
+        void onRestore(DownloadId downloadId, long itemId);
     }
 
-    IdManager(DownloaderHelper downloaderHelper, SharedPreferences sharedPreferences) {
+    IdManager(ActiveDownloadFetcher downloaderHelper, SharedPreferences sharedPreferences) {
         this.downloaderHelper = downloaderHelper;
         this.sharedPreferences = sharedPreferences;
     }
 
-    public void addWithItem(long downloadId, long itemId) {
+    public void addWithItem(DownloadId downloadId, long itemId) {
         sharedPreferences.edit().putLong(idToKey(downloadId), itemId).apply();
     }
 
     @Override
-    public void onFinish(long downloadId) {
+    public void onFinish(DownloadId downloadId) {
         removeKey(idToKey(downloadId));
     }
 
@@ -35,27 +33,27 @@ public class IdManager implements OnDownloadFinishedListener {
         sharedPreferences.edit().remove(key).apply();
     }
 
-    private String idToKey(long downloadId) {
-        return String.valueOf(downloadId);
+    private String idToKey(DownloadId downloadId) {
+        return downloadId.toKey();
     }
 
     public void restore(final BookKeeperRestorer bookKeeperRestorer) {
         if (sharedPreferences.getAll() != null && !sharedPreferences.getAll().isEmpty()) {
-            downloaderHelper.getActiveDownloadIds(new DownloaderHelper.OnActiveDownloads() {
+            downloaderHelper.getActiveDownloadIds(new ActiveDownloadFetcher.OnActiveDownloads() {
                 @Override
-                public void on(List<Long> activeDownloadIds) {
+                public void on(List<DownloadId> activeDownloadIds) {
                     handleActiveDownloadIds(activeDownloadIds, bookKeeperRestorer);
                 }
             });
         }
     }
 
-    private void handleActiveDownloadIds(List<Long> activeDownloadIds, BookKeeperRestorer bookKeeperRestorer) {
+    private void handleActiveDownloadIds(List<DownloadId> activeDownloadIds, BookKeeperRestorer bookKeeperRestorer) {
         Map<String, Long> keys = (Map<String, Long>) sharedPreferences.getAll();
         for (Map.Entry<String, Long> entry : keys.entrySet()) {
             String key = entry.getKey();
             long itemId = getLong(entry);
-            long downloadId = Long.parseLong(key);
+            DownloadId downloadId = new DownloadId(Long.parseLong(key));
             if (pruneIds(activeDownloadIds, key)) {
                 bookKeeperRestorer.onRestore(downloadId, itemId);
             } else {
@@ -68,17 +66,17 @@ public class IdManager implements OnDownloadFinishedListener {
         return entry.getValue();
     }
 
-    private boolean pruneIds(List<Long> downloadIds, String key) {
-        return hasId(downloadIds, keyToId(key));
+    private boolean pruneIds(List<DownloadId> downloadIds, String key) {
+        return hasId(downloadIds, new DownloadId(keyToId(key)));
     }
 
     private long keyToId(String key) {
         return Long.valueOf(key);
     }
 
-    private boolean hasId(List<Long> downloadIds, long downloadId) {
-        for (Long currentId : downloadIds) {
-            if (currentId == downloadId) {
+    private boolean hasId(List<DownloadId> downloadIds, DownloadId idFromPreferences) {
+        for (DownloadId currentId : downloadIds) {
+            if (currentId.equals(idFromPreferences)) {
                 return true;
             }
         }

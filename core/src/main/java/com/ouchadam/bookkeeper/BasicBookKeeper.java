@@ -3,116 +3,53 @@ package com.ouchadam.bookkeeper;
 import android.app.Activity;
 import android.app.DownloadManager;
 import android.content.Context;
-import android.content.Intent;
-import com.ouchadam.bookkeeper.progress.OnAllDownloadsFinished;
-import com.ouchadam.bookkeeper.progress.OnDownloadFinishedListener;
-import com.ouchadam.bookkeeper.progress.ProgressReceiver;
-import com.ouchadam.bookkeeper.service.WatchService;
-import com.ouchadam.bookkeeper.util.ServiceUtil;
+import android.content.SharedPreferences;
 import com.ouchadam.bookkeeper.watcher.DownloadWatcher;
 import com.ouchadam.bookkeeper.watcher.DownloadWatcherManager;
 
 import java.util.Arrays;
-import java.util.List;
 
-public class BasicBookKeeper implements BookKeeper, OnDownloadFinishedListener, OnAllDownloadsFinished {
+public class BasicBookKeeper implements BookKeeper {
 
-    private final Context context;
-    private final DownloadManager downloadManager;
-    private final DownloadWatcherManager downloadWatcherManager;
-    private final IdManager idManager;
-
-    private ProgressReceiver progressReceiver;
+    private final FooManager fooManager;
 
     public static BasicBookKeeper newInstance(Context context) {
-        return new BasicBookKeeper(
-                context.getApplicationContext(),
-                (DownloadManager) context.getSystemService(Context.DOWNLOAD_SERVICE),
-                new DownloadWatcherManager(),
-                new IdManager(new DownloaderHelper(context), context.getSharedPreferences(BookKeeper.class.getSimpleName(), Activity.MODE_PRIVATE)));
+        FooManager fooManager = createFooManager(context);
+        return new BasicBookKeeper(fooManager);
     }
 
-    BasicBookKeeper(Context context, DownloadManager downloadManager, DownloadWatcherManager downloadWatcherManager, IdManager idManager) {
-        this.context = context;
-        this.downloadManager = downloadManager;
-        this.downloadWatcherManager = downloadWatcherManager;
-        this.idManager = idManager;
+    private static FooManager createFooManager(Context context) {
+        DownloadEnqueuer downloadEnqueuer = new DownloadEnqueuer((DownloadManager) context.getSystemService(Context.DOWNLOAD_SERVICE));
+        SharedPreferences keeperPreferences = context.getSharedPreferences(BookKeeper.class.getSimpleName(), Activity.MODE_PRIVATE);
+        IdManager idManager = new IdManager(new ActiveDownloadFetcher(context), keeperPreferences);
+        WatcherServiceStarter watcherService = new WatcherServiceStarter(context);
+        return new FooManager(context, downloadEnqueuer, new DownloadWatcherManager(), idManager, watcherService);
     }
 
-    @Override
-    public long keep(Downloadable downloadable) {
-        return new DownloadEnqueuer(downloadManager).start(downloadable);
+    BasicBookKeeper(FooManager fooManager) {
+        this.fooManager = fooManager;
     }
 
     @Override
-    public void watch(long downloadId, DownloadWatcher... downloadWatcher) {
-        attachWatchers(Arrays.asList(downloadWatcher));
-        downloadWatcherManager.onStart(downloadId);
-        if (isNotWatching()) {
-            startWatching(downloadId);
-        }
-    }
-
-    private void attachWatchers(List<DownloadWatcher> downloadWatchers) {
-        for (DownloadWatcher downloadWatcher : downloadWatchers) {
-            attachWatcher(downloadWatcher);
-        }
-        initProgressReceiver();
-    }
-
-    private void attachWatcher(DownloadWatcher downloadWatcher) {
-        downloadWatcherManager.addWatcher(downloadWatcher);
-    }
-
-    private void initProgressReceiver() {
-        if (progressReceiver == null) {
-            progressReceiver = new ProgressReceiver(downloadWatcherManager, this, this);
-            progressReceiver.register(context);
-        }
-    }
-
-    private boolean isNotWatching() {
-        return !ServiceUtil.isRunning(context, WatchService.class);
-    }
-
-    private void startWatching(long downloadId) {
-        Intent service = createServiceIntent(downloadId);
-        context.startService(service);
-    }
-
-    private Intent createServiceIntent(long downloadId) {
-        Intent service = new Intent(context, WatchService.class);
-        service.putExtra(BookKeeper.EXTRA_DOWNLOAD_ID, downloadId);
-        return service;
+    public DownloadId keep(Downloadable downloadable) {
+        return fooManager.start(downloadable);
     }
 
     @Override
-    public void onFinish(long downloadId) {
-        idManager.onFinish(downloadId);
+    public void watch(DownloadId downloadId, DownloadWatcher... downloadWatchers) {
+        attachWatchers(downloadWatchers);
+        fooManager.startListeningForUpdates(downloadId);
     }
 
-    private void detach() {
-        if (progressReceiver != null) {
-            try {
-                progressReceiver.unregister(context);
-            } catch (IllegalArgumentException e) {
-                e.printStackTrace();
-            }
-            progressReceiver = null;
-        }
-    }
-
-    @Override
-    public void onAllFinished() {
-        downloadWatcherManager.clear();
-        detach();
+    private void attachWatchers(DownloadWatcher... downloadWatcher) {
+        fooManager.attachWatchers(Arrays.asList(downloadWatcher));
     }
 
     public void restore(IdManager.BookKeeperRestorer bookKeeperRestorer) {
-        idManager.restore(bookKeeperRestorer);
+        fooManager.restore(bookKeeperRestorer);
     }
 
-    public void store(long downloadId, long itemId) {
-        idManager.addWithItem(downloadId, itemId);
+    public void store(DownloadId downloadId, long itemId) {
+        fooManager.store(downloadId, itemId);
     }
 }

@@ -3,13 +3,14 @@ package com.example;
 import android.app.Activity;
 import android.app.Fragment;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import com.ouchadam.bookkeeper.DownloadId;
 import com.ouchadam.bookkeeper.Downloadable;
+import com.ouchadam.bookkeeper.Downloader;
 import com.ouchadam.bookkeeper.watcher.DownloadWatcher;
 import com.ouchadam.bookkeeper.watcher.ListItemWatcher;
 import com.ouchadam.bookkeeper.watcher.NotificationWatcher;
@@ -50,21 +51,20 @@ public class DemoFragment extends Fragment implements AdapterView.OnItemClickLis
         SimpleItem item = adapter.getItem(position);
         Downloadable downloadable = new ExampleDownloadable(item);
 
-        long downloadId = downloader.keep(downloadable);
+        DownloadId downloadId = downloader.keep(downloadable);
         downloader.store(downloadId, itemId);
         downloader.watch(downloadId, getDownloadWatchers(itemId, downloadable, downloadId));
     }
 
-
-    private DownloadWatcher[] getDownloadWatchers(long itemId, Downloadable downloadable, long downloadId) {
+    private DownloadWatcher[] getDownloadWatchers(long itemId, Downloadable downloadable, DownloadId downloadId) {
         return new DownloadWatcher[]{createNotificationWatcher(downloadable, downloadId), createListItemWatcher(itemId, downloadId)};
     }
 
-    private NotificationWatcher createNotificationWatcher(Downloadable downloadable, long downloadId) {
+    private NotificationWatcher createNotificationWatcher(Downloadable downloadable, DownloadId downloadId) {
         return new NotificationWatcher(getActivity(), downloadable, downloadId);
     }
 
-    private ListItemWatcher createListItemWatcher(long itemId, long downloadId) {
+    private ListItemWatcher createListItemWatcher(long itemId, DownloadId downloadId) {
         return new ListItemWatcher(adapter, itemId, downloadId);
     }
 

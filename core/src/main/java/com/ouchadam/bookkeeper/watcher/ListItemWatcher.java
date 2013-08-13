@@ -1,6 +1,6 @@
 package com.ouchadam.bookkeeper.watcher;
 
-import android.util.Log;
+import com.ouchadam.bookkeeper.DownloadId;
 import com.ouchadam.bookkeeper.progress.ProgressValues;
 import com.ouchadam.bookkeeper.watcher.adapter.ListItemProgress;
 
@@ -10,7 +10,7 @@ public class ListItemWatcher implements DownloadWatcher {
 
     private final ItemWatcher itemWatcher;
     private final long itemId;
-    private long downloadId;
+    private final DownloadId downloadId;
 
     public interface ItemWatcher {
         void setStageFor(long itemId, ListItemProgress.Stage stage);
@@ -18,7 +18,7 @@ public class ListItemWatcher implements DownloadWatcher {
         void notifyAdapter();
     }
 
-    public ListItemWatcher(ItemWatcher itemWatcher, long itemId, long downloadId) {
+    public ListItemWatcher(ItemWatcher itemWatcher, long itemId, DownloadId downloadId) {
         this.itemWatcher = itemWatcher;
         this.itemId = itemId;
         this.downloadId = downloadId;
@@ -26,8 +26,8 @@ public class ListItemWatcher implements DownloadWatcher {
     }
 
     @Override
-    public boolean isWatching(long downloadId) {
-        return this.downloadId == downloadId;
+    public boolean isWatching(DownloadId downloadId) {
+        return this.downloadId.equals(downloadId);
     }
 
     @Override

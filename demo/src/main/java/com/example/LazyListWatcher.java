@@ -1,9 +1,11 @@
 package com.example;
 
+import com.ouchadam.bookkeeper.DownloadId;
 import com.ouchadam.bookkeeper.watcher.DownloadWatcher;
+import com.ouchadam.bookkeeper.watcher.LazyWatcher;
 import com.ouchadam.bookkeeper.watcher.ListItemWatcher;
 
-class LazyListWatcher implements LazyWatcher {
+public class LazyListWatcher implements LazyWatcher {
 
     private final ListItemWatcher.ItemWatcher itemWatcher;
 
@@ -12,7 +14,7 @@ class LazyListWatcher implements LazyWatcher {
     }
 
     @Override
-    public DownloadWatcher create(long downloadId, long itemId) {
+    public DownloadWatcher create(DownloadId downloadId, long itemId) {
         return new ListItemWatcher(itemWatcher, itemId, downloadId);
     }
 }

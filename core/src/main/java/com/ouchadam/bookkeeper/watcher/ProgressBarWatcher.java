@@ -2,14 +2,15 @@ package com.ouchadam.bookkeeper.watcher;
 
 import android.view.View;
 import android.widget.ProgressBar;
+import com.ouchadam.bookkeeper.DownloadId;
 import com.ouchadam.bookkeeper.progress.ProgressValues;
 
 public class ProgressBarWatcher implements DownloadWatcher {
 
     private final ProgressBar progressBar;
-    private final long downloadId;
+    private final DownloadId downloadId;
 
-    public ProgressBarWatcher(ProgressBar progressBar, long downloadId) {
+    public ProgressBarWatcher(ProgressBar progressBar, DownloadId downloadId) {
         this.downloadId = downloadId;
         validate(progressBar);
         this.progressBar = progressBar;
@@ -22,8 +23,8 @@ public class ProgressBarWatcher implements DownloadWatcher {
     }
 
     @Override
-    public boolean isWatching(long downloadId) {
-        return this.downloadId == downloadId;
+    public boolean isWatching(DownloadId downloadId) {
+        return this.downloadId.equals(downloadId);
     }
 
     @Override

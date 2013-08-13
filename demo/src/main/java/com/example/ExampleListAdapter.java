@@ -1,10 +1,8 @@
 package com.example;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.BaseAdapter;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import com.ouchadam.bookkeeper.progress.ProgressValues;
@@ -34,6 +32,21 @@ public class ExampleListAdapter extends TypedBaseAdapter<SimpleItem> implements 
         data.add(new SimpleItem("item one", "http://ipv4.download.thinkbroadband.com/5MB.zip"));
         data.add(new SimpleItem("item 2", "http://ipv4.download.thinkbroadband.com/5MB.zip"));
         return data;
+    }
+
+    @Override
+    public int getCount() {
+        return data.size();
+    }
+
+    @Override
+    public SimpleItem getItem(int i) {
+        return data.get(i);
+    }
+
+    @Override
+    public long getItemId(int i) {
+        return data.get(i).hashCode();
     }
 
     @Override
@@ -82,21 +95,6 @@ public class ExampleListAdapter extends TypedBaseAdapter<SimpleItem> implements 
     @Override
     public void notifyAdapter() {
         notifyDataSetChanged();
-    }
-
-    @Override
-    public int getCount() {
-        return data.size();
-    }
-
-    @Override
-    public SimpleItem getItem(int i) {
-        return data.get(i);
-    }
-
-    @Override
-    public long getItemId(int i) {
-        return data.get(i).hashCode();
     }
 
     public static class ViewHolder {

@@ -1,5 +1,6 @@
 package com.ouchadam.bookkeeper.watcher;
 
+import com.ouchadam.bookkeeper.DownloadId;
 import com.ouchadam.bookkeeper.progress.ProgressValues;
 
 import java.util.ArrayList;
@@ -22,7 +23,7 @@ public class DownloadWatcherManager {
         downloadWatchers.add(downloadWatcher);
     }
 
-    public void onStart(long downloadId) {
+    public void onStart(DownloadId downloadId) {
         forEachWithId(onStart, downloadId);
     }
 
@@ -33,7 +34,7 @@ public class DownloadWatcherManager {
         }
     };
 
-    public void onUpdate(long downloadId, final ProgressValues progressValues) {
+    public void onUpdate(DownloadId downloadId, final ProgressValues progressValues) {
         forEachWithId(new ForEachDownloadWatcher() {
             @Override
             public void on(DownloadWatcher downloadWatcher, Iterator<DownloadWatcher> iterator) {
@@ -42,7 +43,7 @@ public class DownloadWatcherManager {
         },downloadId);
     }
 
-    public void onStop(long downloadId) {
+    public void onStop(DownloadId downloadId) {
         forEachWithId(onStop, downloadId);
         forEachWithId(cleanWatchers, downloadId);
     }
@@ -61,7 +62,7 @@ public class DownloadWatcherManager {
         }
     };
 
-    private void forEachWithId(ForEachDownloadWatcher forEach, long downloadId) {
+    private void forEachWithId(ForEachDownloadWatcher forEach, DownloadId downloadId) {
         Iterator<DownloadWatcher> iterator = downloadWatchers.iterator();
         while (iterator.hasNext()) {
             DownloadWatcher downloadWatcher = iterator.next();

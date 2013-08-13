@@ -2,16 +2,9 @@ package com.example;
 
 import android.app.Activity;
 import android.os.Bundle;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ListView;
-import com.ouchadam.bookkeeper.BasicBookKeeper;
-import com.ouchadam.bookkeeper.Downloadable;
-import com.ouchadam.bookkeeper.IdManager;
+import com.ouchadam.bookkeeper.*;
 import com.ouchadam.bookkeeper.watcher.DownloadWatcher;
-import com.ouchadam.bookkeeper.watcher.ListItemWatcher;
-import com.ouchadam.bookkeeper.watcher.NotificationWatcher;
+import com.ouchadam.bookkeeper.watcher.LazyWatcher;
 
 public class DemoActivity extends Activity implements Downloader {
 
@@ -26,17 +19,17 @@ public class DemoActivity extends Activity implements Downloader {
     }
 
     @Override
-    public void watch(long downloadId, DownloadWatcher... downloadWatcher) {
+    public void watch(DownloadId downloadId, DownloadWatcher... downloadWatcher) {
         bookKeeper.watch(downloadId, downloadWatcher);
     }
 
     @Override
-    public void store(long downloadId, long itemId) {
+    public void store(DownloadId downloadId, long itemId) {
         bookKeeper.store(downloadId, itemId);
     }
 
     @Override
-    public long keep(Downloadable downloadable) {
+    public DownloadId keep(Downloadable downloadable) {
         return bookKeeper.keep(downloadable);
     }
 
@@ -44,7 +37,7 @@ public class DemoActivity extends Activity implements Downloader {
     public void restore(final LazyWatcher lazyWatcher) {
         bookKeeper.restore(new IdManager.BookKeeperRestorer() {
             @Override
-            public void onRestore(long downloadId, long itemId) {
+            public void onRestore(DownloadId downloadId, long itemId) {
                 bookKeeper.watch(downloadId, lazyWatcher.create(downloadId, itemId));
             }
         });

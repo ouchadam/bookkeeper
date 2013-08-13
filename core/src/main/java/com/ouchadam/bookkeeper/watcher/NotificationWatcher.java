@@ -4,6 +4,7 @@ import android.app.Notification;
 import android.app.NotificationManager;
 import android.content.Context;
 
+import com.ouchadam.bookkeeper.DownloadId;
 import com.ouchadam.bookkeeper.Downloadable;
 import com.ouchadam.bookkeeper.progress.ProgressValues;
 
@@ -18,9 +19,9 @@ public class NotificationWatcher implements DownloadWatcher {
     private final int notificationId;
     private final Notification.Builder notification;
     private final Downloadable downloadable;
-    private final long downloadId;
+    private final DownloadId downloadId;
 
-    public NotificationWatcher(Context context, Downloadable downloadable, long downloadId) {
+    public NotificationWatcher(Context context, Downloadable downloadable, DownloadId downloadId) {
         this.downloadable = downloadable;
         this.downloadId = downloadId;
         this.notificationId = downloadable.fileName().hashCode();
@@ -29,8 +30,8 @@ public class NotificationWatcher implements DownloadWatcher {
     }
 
     @Override
-    public boolean isWatching(long downloadId) {
-        return this.downloadId == downloadId;
+    public boolean isWatching(DownloadId downloadId) {
+        return this.downloadId.equals(downloadId);
     }
 
     @Override
