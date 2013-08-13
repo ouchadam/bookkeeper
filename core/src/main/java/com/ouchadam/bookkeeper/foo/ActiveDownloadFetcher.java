@@ -1,9 +1,10 @@
-package com.ouchadam.bookkeeper;
+package com.ouchadam.bookkeeper.foo;
 
 import android.app.DownloadManager;
 import android.content.Context;
 import android.database.Cursor;
 import android.os.AsyncTask;
+import com.ouchadam.bookkeeper.domain.DownloadId;
 
 import java.util.ArrayList;
 import java.util.List;

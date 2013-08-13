@@ -1,4 +1,4 @@
-package com.ouchadam.bookkeeper;
+package com.ouchadam.bookkeeper.foo;
 
 import android.content.Context;
 import com.ouchadam.bookkeeper.progress.ProgressReceiver;
@@ -18,13 +18,13 @@ class ProgressReceiverRegisterer {
     public void register() {
         if (!registered) {
             registered = true;
-            progressReceiver.register(context);
+            progressReceiver.register(context.getApplicationContext());
         }
     }
 
     public void unregister() {
         if (registered) {
-            progressReceiver.unregister(context);
+            progressReceiver.unregister(context.getApplicationContext());
         }
     }
 }

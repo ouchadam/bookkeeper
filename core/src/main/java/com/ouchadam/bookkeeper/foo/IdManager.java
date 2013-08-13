@@ -1,6 +1,7 @@
-package com.ouchadam.bookkeeper;
+package com.ouchadam.bookkeeper.foo;
 
 import android.content.SharedPreferences;
+import com.ouchadam.bookkeeper.domain.DownloadId;
 import com.ouchadam.bookkeeper.progress.OnDownloadFinishedListener;
 
 import java.util.List;

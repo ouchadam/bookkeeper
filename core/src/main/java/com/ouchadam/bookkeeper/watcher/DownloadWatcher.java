@@ -1,7 +1,7 @@
 package com.ouchadam.bookkeeper.watcher;
 
-import com.ouchadam.bookkeeper.DownloadId;
-import com.ouchadam.bookkeeper.progress.ProgressValues;
+import com.ouchadam.bookkeeper.domain.DownloadId;
+import com.ouchadam.bookkeeper.domain.ProgressValues;
 
 public interface DownloadWatcher {
     boolean isWatching(DownloadId downloadId);

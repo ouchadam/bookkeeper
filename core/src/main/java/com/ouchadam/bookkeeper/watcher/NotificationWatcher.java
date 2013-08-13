@@ -4,9 +4,9 @@ import android.app.Notification;
 import android.app.NotificationManager;
 import android.content.Context;
 
-import com.ouchadam.bookkeeper.DownloadId;
-import com.ouchadam.bookkeeper.Downloadable;
-import com.ouchadam.bookkeeper.progress.ProgressValues;
+import com.ouchadam.bookkeeper.domain.DownloadId;
+import com.ouchadam.bookkeeper.domain.Downloadable;
+import com.ouchadam.bookkeeper.domain.ProgressValues;
 
 import static android.R.drawable.stat_notify_sync_noanim;
 

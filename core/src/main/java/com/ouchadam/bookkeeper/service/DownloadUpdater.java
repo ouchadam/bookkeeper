@@ -3,7 +3,7 @@ package com.ouchadam.bookkeeper.service;
 import android.app.DownloadManager;
 import android.database.Cursor;
 import android.util.Log;
-import com.ouchadam.bookkeeper.progress.ProgressValues;
+import com.ouchadam.bookkeeper.domain.ProgressValues;
 
 class DownloadUpdater {
 
@@ -19,16 +19,15 @@ class DownloadUpdater {
 
     public void watch() {
         boolean allDownloadsFinished = false;
-        long startTime = System.currentTimeMillis();
         while (!allDownloadsFinished) {
             Cursor cursor = getDownloadCursor();
             if (cursor != null) {
                 if (cursor.moveToFirst()) {
                     do {
-                        Log.e("!!!", "Loop : " + allDownloadsFinished + "  isDownloaded : " + isDownloaded(cursor) + " past time offset : " + outOfThres(startTime));
+                        Log.e("!!!", "Loop : " + allDownloadsFinished + "  isDownloaded : " + isDownloaded(cursor));
                         int downloadStatus = cursor.getInt(cursor.getColumnIndex(DownloadManager.COLUMN_STATUS));
                         handleStatus(downloadStatus, cursor);
-                        allDownloadsFinished = !isDownloading(cursor) && outOfThres(startTime);
+                        allDownloadsFinished = !isDownloading(cursor);
                     } while (cursor.moveToNext());
                 }
                 cursor.close();
@@ -36,10 +35,6 @@ class DownloadUpdater {
             }
         }
         Log.e("!!!", "Loop escaped");
-    }
-
-    private boolean outOfThres(long startTime) {
-        return System.currentTimeMillis() > (startTime + 5000);
     }
 
     private void handleStatus(int downloadStatus, Cursor cursor) {
@@ -125,7 +120,7 @@ class DownloadUpdater {
     }
 
     private boolean isDownloading(Cursor cursor) {
-        return getDownloadStatus(cursor) != DownloadManager.STATUS_SUCCESSFUL && isDownloaded(cursor);
+        return getDownloadStatus(cursor) != DownloadManager.STATUS_SUCCESSFUL && !isDownloaded(cursor);
     }
 
     private int getDownloadStatus(Cursor cursor) {

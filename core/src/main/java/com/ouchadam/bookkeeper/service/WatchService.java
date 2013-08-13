@@ -4,9 +4,8 @@ import android.app.DownloadManager;
 import android.app.IntentService;
 import android.content.Context;
 import android.content.Intent;
-import com.ouchadam.bookkeeper.BookKeeper;
 import com.ouchadam.bookkeeper.progress.ProgressUpdater;
-import com.ouchadam.bookkeeper.progress.ProgressValues;
+import com.ouchadam.bookkeeper.domain.ProgressValues;
 
 public class WatchService extends IntentService implements FileDownloadProgressWatcher {
 

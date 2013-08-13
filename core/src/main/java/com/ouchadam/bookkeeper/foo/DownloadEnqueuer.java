@@ -1,8 +1,9 @@
-package com.ouchadam.bookkeeper;
+package com.ouchadam.bookkeeper.foo;
 
 import android.app.DownloadManager;
 import android.net.Uri;
 import android.os.Environment;
+import com.ouchadam.bookkeeper.domain.Downloadable;
 
 class DownloadEnqueuer {
 

@@ -1,9 +1,9 @@
-package com.ouchadam.bookkeeper;
+package com.ouchadam.bookkeeper.foo;
 
+import android.app.ActivityManager;
 import android.content.Context;
 import android.content.Intent;
 import com.ouchadam.bookkeeper.service.WatchService;
-import com.ouchadam.bookkeeper.util.ServiceUtil;
 
 class WatcherServiceStarter {
 
@@ -15,9 +15,8 @@ class WatcherServiceStarter {
 
     public void startWatching() {
         if (isNotWatching()) {
-            startWatching();
+            startWatcherService();
         }
-        startWatcherService();
     }
 
     private boolean isNotWatching() {
@@ -31,6 +30,20 @@ class WatcherServiceStarter {
 
     private Intent createServiceIntent() {
         return new Intent(context, WatchService.class);
+    }
+
+    private static class ServiceUtil {
+
+        public static boolean isRunning(Context context, Class service) {
+            ActivityManager manager = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
+            for (ActivityManager.RunningServiceInfo currentRunningService : manager.getRunningServices(Integer.MAX_VALUE)) {
+                if (service.getName().equals(currentRunningService.service.getClassName())) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
     }
 
 }

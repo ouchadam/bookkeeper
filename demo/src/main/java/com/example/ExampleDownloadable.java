@@ -1,13 +1,7 @@
 package com.example;
 
 import android.net.Uri;
-import android.os.Environment;
-import com.ouchadam.bookkeeper.Downloadable;
-
-import java.io.File;
-import java.net.MalformedURLException;
-import java.net.URI;
-import java.net.URL;
+import com.ouchadam.bookkeeper.domain.Downloadable;
 
 public class ExampleDownloadable implements Downloadable {
 

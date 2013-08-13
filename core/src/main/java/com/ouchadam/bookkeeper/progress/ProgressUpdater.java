@@ -2,7 +2,7 @@ package com.ouchadam.bookkeeper.progress;
 
 import android.content.Context;
 import android.content.Intent;
-import android.os.Bundle;
+import com.ouchadam.bookkeeper.domain.ProgressValues;
 
 public class ProgressUpdater {
 

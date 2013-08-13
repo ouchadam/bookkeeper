@@ -1,8 +1,6 @@
 package com.ouchadam.bookkeeper.watcher.adapter;
 
-import android.util.Log;
-import android.widget.BaseAdapter;
-import com.ouchadam.bookkeeper.progress.ProgressValues;
+import com.ouchadam.bookkeeper.domain.ProgressValues;
 
 import java.util.HashMap;
 import java.util.Map;

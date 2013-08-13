@@ -5,7 +5,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import com.ouchadam.bookkeeper.progress.ProgressValues;
+import com.ouchadam.bookkeeper.domain.ProgressValues;
 import com.ouchadam.bookkeeper.watcher.ListItemWatcher;
 import com.ouchadam.bookkeeper.watcher.adapter.ProgressDelegate;
 import com.ouchadam.bookkeeper.watcher.adapter.TypedBaseAdapter;

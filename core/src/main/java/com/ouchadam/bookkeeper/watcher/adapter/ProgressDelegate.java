@@ -1,6 +1,6 @@
 package com.ouchadam.bookkeeper.watcher.adapter;
 
-import com.ouchadam.bookkeeper.progress.ProgressValues;
+import com.ouchadam.bookkeeper.domain.ProgressValues;
 
 public interface ProgressDelegate<VH> {
     ListItemProgress.Stage getStage(int position);

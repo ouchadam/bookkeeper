@@ -3,6 +3,9 @@ package com.example;
 import android.app.Activity;
 import android.os.Bundle;
 import com.ouchadam.bookkeeper.*;
+import com.ouchadam.bookkeeper.domain.DownloadId;
+import com.ouchadam.bookkeeper.domain.Downloadable;
+import com.ouchadam.bookkeeper.foo.IdManager;
 import com.ouchadam.bookkeeper.watcher.DownloadWatcher;
 import com.ouchadam.bookkeeper.watcher.LazyWatcher;
 

@@ -1,12 +1,19 @@
-package com.ouchadam.bookkeeper;
+package com.ouchadam.bookkeeper.foo;
 
+import android.app.Activity;
+import android.app.DownloadManager;
 import android.content.Context;
+import android.content.SharedPreferences;
+import com.ouchadam.bookkeeper.BookKeeper;
+import com.ouchadam.bookkeeper.domain.DownloadId;
+import com.ouchadam.bookkeeper.domain.Downloadable;
 import com.ouchadam.bookkeeper.progress.OnAllDownloadsFinished;
 import com.ouchadam.bookkeeper.progress.OnDownloadFinishedListener;
 import com.ouchadam.bookkeeper.progress.ProgressReceiver;
 import com.ouchadam.bookkeeper.watcher.DownloadWatcher;
 import com.ouchadam.bookkeeper.watcher.DownloadWatcherManager;
 
+import java.io.File;
 import java.util.List;
 
 public class BookKeeperDelegate {
@@ -17,7 +24,15 @@ public class BookKeeperDelegate {
     private final ProgressReceiverRegisterer progressReceiver;
     private final WatcherServiceStarter watcherService;
 
-    public BookKeeperDelegate(Context context, DownloadEnqueuer downloadEnqueuer, DownloadWatcherManager downloadWatcherManager, IdManager idManager, WatcherServiceStarter watcherService) {
+    public static BookKeeperDelegate newInstance(Context context) {
+        DownloadEnqueuer downloadEnqueuer = new DownloadEnqueuer((DownloadManager) context.getSystemService(Context.DOWNLOAD_SERVICE));
+        SharedPreferences keeperPreferences = context.getSharedPreferences(BookKeeper.class.getSimpleName(), Activity.MODE_PRIVATE);
+        IdManager idManager = new IdManager(new ActiveDownloadFetcher(context), keeperPreferences);
+        WatcherServiceStarter watcherService = new WatcherServiceStarter(context);
+        return new BookKeeperDelegate(context, downloadEnqueuer, new DownloadWatcherManager(), idManager, watcherService);
+    }
+
+    BookKeeperDelegate(Context context, DownloadEnqueuer downloadEnqueuer, DownloadWatcherManager downloadWatcherManager, IdManager idManager, WatcherServiceStarter watcherService) {
         this.downloadEnqueuer = downloadEnqueuer;
         this.downloadWatcherManager = downloadWatcherManager;
         this.idManager = idManager;

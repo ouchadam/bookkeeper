@@ -1,4 +1,4 @@
-package com.ouchadam.bookkeeper.progress;
+package com.ouchadam.bookkeeper.domain;
 
 import java.io.Serializable;
 

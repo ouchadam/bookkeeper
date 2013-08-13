@@ -2,8 +2,7 @@ package com.example;
 
 import android.util.Log;
 import android.view.View;
-import android.widget.BaseAdapter;
-import com.ouchadam.bookkeeper.progress.ProgressValues;
+import com.ouchadam.bookkeeper.domain.ProgressValues;
 import com.ouchadam.bookkeeper.watcher.adapter.ListItemProgress;
 import com.ouchadam.bookkeeper.watcher.adapter.TypedBaseAdapter;
 

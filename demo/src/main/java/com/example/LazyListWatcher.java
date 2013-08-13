@@ -1,6 +1,6 @@
 package com.example;
 
-import com.ouchadam.bookkeeper.DownloadId;
+import com.ouchadam.bookkeeper.domain.DownloadId;
 import com.ouchadam.bookkeeper.watcher.DownloadWatcher;
 import com.ouchadam.bookkeeper.watcher.LazyWatcher;
 import com.ouchadam.bookkeeper.watcher.ListItemWatcher;
