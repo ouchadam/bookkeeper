@@ -1,15 +1,16 @@
-package com.ouchadam.bookkeeper.foo;
+package com.ouchadam.bookkeeper.delegate;
 
 import android.content.SharedPreferences;
 import com.ouchadam.bookkeeper.domain.DownloadId;
 import com.ouchadam.bookkeeper.progress.OnDownloadFinishedListener;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
 public class IdManager implements OnDownloadFinishedListener {
 
-    private ActiveDownloadFetcher downloaderHelper;
+    private final ActiveDownloadFetcher downloaderHelper;
     private final SharedPreferences sharedPreferences;
 
     public interface BookKeeperRestorer {
@@ -39,7 +40,7 @@ public class IdManager implements OnDownloadFinishedListener {
     }
 
     public void restore(final BookKeeperRestorer bookKeeperRestorer) {
-        if (sharedPreferences.getAll() != null && !sharedPreferences.getAll().isEmpty()) {
+        if (hasPreferences()) {
             downloaderHelper.getActiveDownloadIds(new ActiveDownloadFetcher.OnActiveDownloads() {
                 @Override
                 public void on(List<DownloadId> activeDownloadIds) {
@@ -49,8 +50,21 @@ public class IdManager implements OnDownloadFinishedListener {
         }
     }
 
+    private boolean hasPreferences() {
+        return !getAllPrefs().isEmpty();
+    }
+
+    // This shared preferences is used internally so we can kind of safely cast it.
+    @SuppressWarnings("unchecked")
+    private Map<String, Long> getAllPrefs() {
+        if (sharedPreferences.getAll() != null) {
+            return (Map<String, Long>) sharedPreferences.getAll();
+        }
+        return Collections.emptyMap();
+    }
+
     private void handleActiveDownloadIds(List<DownloadId> activeDownloadIds, BookKeeperRestorer bookKeeperRestorer) {
-        Map<String, Long> keys = (Map<String, Long>) sharedPreferences.getAll();
+        Map<String, Long> keys = getAllPrefs();
         for (Map.Entry<String, Long> entry : keys.entrySet()) {
             String key = entry.getKey();
             long itemId = getLong(entry);

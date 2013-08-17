@@ -3,22 +3,22 @@ package com.ouchadam.bookkeeper;
 import android.content.Context;
 import com.ouchadam.bookkeeper.domain.DownloadId;
 import com.ouchadam.bookkeeper.domain.Downloadable;
-import com.ouchadam.bookkeeper.foo.BookKeeperDelegate;
-import com.ouchadam.bookkeeper.foo.IdManager;
+import com.ouchadam.bookkeeper.delegate.BookKeeperDelegate;
+import com.ouchadam.bookkeeper.delegate.IdManager;
 import com.ouchadam.bookkeeper.watcher.DownloadWatcher;
 
 import java.util.Arrays;
 
-public class BasicBookKeeper implements BookKeeper {
+public class RestoreableBookKeeper implements BookKeeper {
 
     private final BookKeeperDelegate bookKeeperDelegate;
 
-    public static BasicBookKeeper newInstance(Context context) {
+    public static RestoreableBookKeeper newInstance(Context context) {
         BookKeeperDelegate bookKeeperDelegate = BookKeeperDelegate.newInstance(context);
-        return new BasicBookKeeper(bookKeeperDelegate);
+        return new RestoreableBookKeeper(bookKeeperDelegate);
     }
 
-    BasicBookKeeper(BookKeeperDelegate bookKeeperDelegate) {
+    RestoreableBookKeeper(BookKeeperDelegate bookKeeperDelegate) {
         this.bookKeeperDelegate = bookKeeperDelegate;
     }
 

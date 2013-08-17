@@ -2,14 +2,13 @@ package com.ouchadam.bookkeeper.domain;
 
 public class DownloadId {
 
+    private static final long INVALID_ID_VALUE = -1L;
+    private static final DownloadId INVALID_ID = new DownloadId(INVALID_ID_VALUE);
+
     private final long value;
 
     public DownloadId(long downloadId) {
         this.value = downloadId;
-    }
-
-    public long value() {
-        return value;
     }
 
     public String toKey() {
@@ -28,5 +27,17 @@ public class DownloadId {
     @Override
     public int hashCode() {
         return (int) (value ^ (value >>> 32));
+    }
+
+    public static DownloadId invalid() {
+        return INVALID_ID;
+    }
+
+    public long value() {
+        return value;
+    }
+
+    public boolean isValid() {
+        return this.value != INVALID_ID_VALUE;
     }
 }

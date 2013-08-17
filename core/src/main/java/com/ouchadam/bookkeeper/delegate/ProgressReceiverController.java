@@ -1,30 +1,31 @@
-package com.ouchadam.bookkeeper.foo;
+package com.ouchadam.bookkeeper.delegate;
 
 import android.content.Context;
 import com.ouchadam.bookkeeper.progress.ProgressReceiver;
 
-class ProgressReceiverRegisterer {
+class ProgressReceiverController {
 
     private final Context context;
     private final ProgressReceiver progressReceiver;
 
     private boolean registered;
 
-    ProgressReceiverRegisterer(Context context, ProgressReceiver progressReceiver) {
+    ProgressReceiverController(Context context, ProgressReceiver progressReceiver) {
         this.context = context;
         this.progressReceiver = progressReceiver;
     }
 
     public void register() {
         if (!registered) {
-            registered = true;
             progressReceiver.register(context.getApplicationContext());
+            registered = true;
         }
     }
 
     public void unregister() {
         if (registered) {
             progressReceiver.unregister(context.getApplicationContext());
+            registered = false;
         }
     }
 }

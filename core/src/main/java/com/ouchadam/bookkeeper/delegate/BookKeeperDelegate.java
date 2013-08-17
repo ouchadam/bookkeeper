@@ -1,4 +1,4 @@
-package com.ouchadam.bookkeeper.foo;
+package com.ouchadam.bookkeeper.delegate;
 
 import android.app.Activity;
 import android.app.DownloadManager;
@@ -7,13 +7,13 @@ import android.content.SharedPreferences;
 import com.ouchadam.bookkeeper.BookKeeper;
 import com.ouchadam.bookkeeper.domain.DownloadId;
 import com.ouchadam.bookkeeper.domain.Downloadable;
+import com.ouchadam.bookkeeper.progress.KeeperIntentHandler;
 import com.ouchadam.bookkeeper.progress.OnAllDownloadsFinished;
 import com.ouchadam.bookkeeper.progress.OnDownloadFinishedListener;
 import com.ouchadam.bookkeeper.progress.ProgressReceiver;
 import com.ouchadam.bookkeeper.watcher.DownloadWatcher;
 import com.ouchadam.bookkeeper.watcher.DownloadWatcherManager;
 
-import java.io.File;
 import java.util.List;
 
 public class BookKeeperDelegate {
@@ -21,7 +21,7 @@ public class BookKeeperDelegate {
     private final DownloadEnqueuer downloadEnqueuer;
     private final DownloadWatcherManager downloadWatcherManager;
     private final IdManager idManager;
-    private final ProgressReceiverRegisterer progressReceiver;
+    private final ProgressReceiverController progressController;
     private final WatcherServiceStarter watcherService;
 
     public static BookKeeperDelegate newInstance(Context context) {
@@ -37,7 +37,12 @@ public class BookKeeperDelegate {
         this.downloadWatcherManager = downloadWatcherManager;
         this.idManager = idManager;
         this.watcherService = watcherService;
-        this.progressReceiver = new ProgressReceiverRegisterer(context, new ProgressReceiver(downloadWatcherManager, downloadFinished, allDownloadsFinished));
+        this.progressController = createProgressController(context, downloadWatcherManager, downloadFinished, allDownloadsFinished);
+    }
+
+    private static ProgressReceiverController createProgressController(Context context, DownloadWatcherManager watcherManager, OnDownloadFinishedListener downloadFinished, OnAllDownloadsFinished allDownloadsFinished) {
+        KeeperIntentHandler keeperIntentHandler = new KeeperIntentHandler(watcherManager, downloadFinished, allDownloadsFinished);
+        return new ProgressReceiverController(context, new ProgressReceiver(keeperIntentHandler));
     }
 
     private final OnDownloadFinishedListener downloadFinished = new OnDownloadFinishedListener() {
@@ -50,18 +55,18 @@ public class BookKeeperDelegate {
     private final OnAllDownloadsFinished allDownloadsFinished = new OnAllDownloadsFinished() {
         @Override
         public void onAllFinished() {
-            progressReceiver.unregister();
+            progressController.unregister();
         }
     };
 
     public DownloadId start(Downloadable downloadable) {
-        long downloadId = downloadEnqueuer.start(downloadable);
+        long downloadId = downloadEnqueuer.enqueue(downloadable);
         return new DownloadId(downloadId);
     }
 
     public void startListeningForUpdates(DownloadId downloadId, List<DownloadWatcher> downloadWatchers) {
         attachWatchers(downloadWatchers);
-        progressReceiver.register();
+        progressController.register();
         broadcastStart(downloadId);
         watcherService.startWatching();
     }

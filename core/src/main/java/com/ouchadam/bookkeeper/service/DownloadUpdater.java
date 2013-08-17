@@ -2,8 +2,10 @@ package com.ouchadam.bookkeeper.service;
 
 import android.app.DownloadManager;
 import android.database.Cursor;
-import android.util.Log;
 import com.ouchadam.bookkeeper.domain.ProgressValues;
+
+import java.util.ArrayList;
+import java.util.List;
 
 class DownloadUpdater {
 
@@ -12,53 +14,47 @@ class DownloadUpdater {
     private final DownloadManager downloadManager;
     private final FileDownloadProgressWatcher progressWatcher;
 
+    List<Long> downloadIds;
+
     DownloadUpdater(DownloadManager downloadManager, FileDownloadProgressWatcher progressWatcher) {
         this.downloadManager = downloadManager;
         this.progressWatcher = progressWatcher;
     }
 
     public void watch() {
+        downloadIds = new ArrayList<Long>();
         boolean allDownloadsFinished = false;
         while (!allDownloadsFinished) {
             Cursor cursor = getDownloadCursor();
             if (cursor != null) {
                 if (cursor.moveToFirst()) {
                     do {
-                        Log.e("!!!", "Loop : " + allDownloadsFinished + "  isDownloaded : " + isDownloaded(cursor));
-                        int downloadStatus = cursor.getInt(cursor.getColumnIndex(DownloadManager.COLUMN_STATUS));
-                        handleStatus(downloadStatus, cursor);
-                        allDownloadsFinished = !isDownloading(cursor);
+                        long downloadId = cursor.getLong(cursor.getColumnIndex(DownloadManager.COLUMN_ID));
+                        if (cursor.getInt(cursor.getColumnIndex(DownloadManager.COLUMN_STATUS)) != DownloadManager.STATUS_SUCCESSFUL) {
+                            downloadIds.add(downloadId);
+                        }
+                        handleCursor(downloadId, cursor);
+                        allDownloadsFinished = downloadIds.isEmpty();
                     } while (cursor.moveToNext());
                 }
                 cursor.close();
                 sleepThread();
             }
         }
-        Log.e("!!!", "Loop escaped");
     }
 
-    private void handleStatus(int downloadStatus, Cursor cursor) {
-        long downloadId = cursor.getLong(cursor.getColumnIndex(DownloadManager.COLUMN_ID));
-
-
-        Log.e("!!!", "Status : " + statusToMessage(downloadStatus));
-//        Log.e("!!!", "Reason : " + cursor.getString(cursor.getColumnIndex(DownloadManager.COLUMN_REASON)));
-//        Log.e("!!!", "Is Downloaded : " + isDownloaded(cursor)) ;
-        Log.e("!!!", "DL Bytes : " + getDownloadedBytes(cursor)) ;
-        Log.e("!!!", "Total : " + getTotalBytes(cursor)) ;
-
-        switch (downloadStatus) {
-            case DownloadManager.STATUS_RUNNING:
-                updateProgress(downloadId, cursor);
-                break;
-
-            case DownloadManager.STATUS_SUCCESSFUL:
-                progressWatcher.onFinish(downloadId);
-                break;
-
-            default:
-                break;
+    private void handleCursor(long downloadId, Cursor cursor) {
+        boolean isDownloading = isDownloading(cursor);
+        if (isDownloading) {
+            updateProgress(downloadId, cursor);
+        } else if (hasntCalledFinish(downloadId) && isDownloaded(cursor)) {
+            progressWatcher.onFinish(downloadId);
+            downloadIds.remove(downloadId);
         }
+    }
+
+    private boolean hasntCalledFinish(long downloadId) {
+        return downloadIds.contains(downloadId);
     }
 
     private boolean isDownloaded(Cursor cursor) {
@@ -71,38 +67,6 @@ class DownloadUpdater {
 
     private int getTotalBytes(Cursor cursor) {
         return cursor.getInt(cursor.getColumnIndex(DownloadManager.COLUMN_TOTAL_SIZE_BYTES));
-    }
-
-    private String statusToMessage(int downloadStatus) {
-        String msg = "???";
-
-        switch (downloadStatus) {
-            case DownloadManager.STATUS_FAILED:
-                msg = "Download failed!";
-                break;
-
-            case DownloadManager.STATUS_PAUSED:
-                msg = "Download paused!";
-                break;
-
-            case DownloadManager.STATUS_PENDING:
-                msg = "Download pending!";
-                break;
-
-            case DownloadManager.STATUS_RUNNING:
-                msg = "Download in progress!";
-                break;
-
-            case DownloadManager.STATUS_SUCCESSFUL:
-                msg = "Download complete!";
-                break;
-
-            default:
-                msg = "Download is nowhere in sight";
-                break;
-        }
-
-        return (msg);
     }
 
     private void updateProgress(long downloadId, Cursor cursor) {
@@ -120,11 +84,7 @@ class DownloadUpdater {
     }
 
     private boolean isDownloading(Cursor cursor) {
-        return getDownloadStatus(cursor) != DownloadManager.STATUS_SUCCESSFUL && !isDownloaded(cursor);
-    }
-
-    private int getDownloadStatus(Cursor cursor) {
-        return cursor.getInt(cursor.getColumnIndex(DownloadManager.COLUMN_STATUS));
+        return !isDownloaded(cursor);
     }
 
     private Cursor getDownloadCursor() {
@@ -134,7 +94,7 @@ class DownloadUpdater {
 
     private DownloadManager.Query createQuery() {
         DownloadManager.Query q = new DownloadManager.Query();
-        q.setFilterByStatus(DownloadManager.STATUS_RUNNING | DownloadManager.STATUS_SUCCESSFUL | DownloadManager.STATUS_FAILED);
+        q.setFilterByStatus(DownloadManager.STATUS_RUNNING | DownloadManager.STATUS_PENDING | DownloadManager.STATUS_FAILED | DownloadManager.STATUS_SUCCESSFUL);
         return q;
     }
 }

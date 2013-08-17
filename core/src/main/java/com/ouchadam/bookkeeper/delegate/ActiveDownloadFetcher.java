@@ -1,4 +1,4 @@
-package com.ouchadam.bookkeeper.foo;
+package com.ouchadam.bookkeeper.delegate;
 
 import android.app.DownloadManager;
 import android.content.Context;

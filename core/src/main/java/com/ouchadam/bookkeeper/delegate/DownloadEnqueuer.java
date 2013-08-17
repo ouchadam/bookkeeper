@@ -1,4 +1,4 @@
-package com.ouchadam.bookkeeper.foo;
+package com.ouchadam.bookkeeper.delegate;
 
 import android.app.DownloadManager;
 import android.net.Uri;
@@ -13,7 +13,7 @@ class DownloadEnqueuer {
         this.downloadManager = downloadManager;
     }
 
-    public long start(Downloadable downloadable) {
+    public long enqueue(Downloadable downloadable) {
         return start(downloadable.url(), downloadable.fileName(), downloadable.title(), downloadable.description());
     }
 

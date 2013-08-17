@@ -3,6 +3,7 @@ package com.ouchadam.bookkeeper.watcher;
 import com.ouchadam.bookkeeper.domain.DownloadId;
 import com.ouchadam.bookkeeper.domain.ProgressValues;
 
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -40,7 +41,7 @@ public class DownloadWatcherManager {
             public void on(DownloadWatcher downloadWatcher, Iterator<DownloadWatcher> iterator) {
                 downloadWatcher.onUpdate(progressValues);
             }
-        },downloadId);
+        }, downloadId);
     }
 
     public void onStop(DownloadId downloadId) {
