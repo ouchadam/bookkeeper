@@ -3,7 +3,7 @@ apply plugin: 'android-library'
 android {
 
     compileSdkVersion 18
-    buildToolsVersion "18"
+    buildToolsVersion "18.1.1"
 
 }
 
@@ -13,7 +13,7 @@ apply plugin: 'maven'
 uploadArchives {
     repositories {
         mavenDeployer {
-            repository(url: "file://home/adam/.m2/repository/")
+            repository(url: "file:///home/adam/.m2/repository/")
         }
     }
 }
