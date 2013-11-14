@@ -48,14 +48,8 @@ public class WatchService extends IntentService implements FileDownloadProgressW
 
     @Override
     public void onTaskRemoved(Intent rootIntent) {
-        Log.e("???", "Watch Service : onTaskRemoved");
         super.onTaskRemoved(rootIntent);
-        new WatcherServiceStarter(this).startWatching();
+//        new WatcherServiceStarter(this).startWatching();
     }
 
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        Log.e("???", "Watch service On Destroy");
-    }
 }
