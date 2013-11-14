@@ -14,7 +14,8 @@
 
   <application>
 
-    <service android:name=".service.WatchService"/>
+    <service android:name=".service.WatchService" android:process=":com.ouchadam.bookkeeper"/>
+    <service android:name=".watcher.AsyncNotificationWatcher$DownloadNotificationService" android:process=":com.ouchadam.bookkeeper"/>
 
   </application>
 

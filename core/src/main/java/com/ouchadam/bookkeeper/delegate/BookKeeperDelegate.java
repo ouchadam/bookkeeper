@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.DownloadManager;
 import android.content.Context;
 import android.content.SharedPreferences;
+
 import com.ouchadam.bookkeeper.BookKeeper;
 import com.ouchadam.bookkeeper.domain.DownloadId;
 import com.ouchadam.bookkeeper.domain.Downloadable;
@@ -14,6 +15,7 @@ import com.ouchadam.bookkeeper.progress.ProgressReceiver;
 import com.ouchadam.bookkeeper.watcher.DownloadWatcher;
 import com.ouchadam.bookkeeper.watcher.DownloadWatcherManager;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class BookKeeperDelegate {
@@ -24,12 +26,18 @@ public class BookKeeperDelegate {
     private final ProgressReceiverController progressController;
     private final WatcherServiceStarter watcherService;
 
-    public static BookKeeperDelegate newInstance(Context context) {
-        DownloadEnqueuer downloadEnqueuer = new DownloadEnqueuer((DownloadManager) context.getSystemService(Context.DOWNLOAD_SERVICE));
-        SharedPreferences keeperPreferences = context.getSharedPreferences(BookKeeper.class.getSimpleName(), Activity.MODE_PRIVATE);
-        IdManager idManager = new IdManager(new ActiveDownloadFetcher(context), keeperPreferences);
-        WatcherServiceStarter watcherService = new WatcherServiceStarter(context);
-        return new BookKeeperDelegate(context, downloadEnqueuer, new DownloadWatcherManager(), idManager, watcherService);
+    private static BookKeeperDelegate bookKeeper;
+
+    public static BookKeeperDelegate getInstance(Context context) {
+        if (bookKeeper == null) {
+            Context applicationContext = context.getApplicationContext();
+            DownloadEnqueuer downloadEnqueuer = new DownloadEnqueuer((DownloadManager) applicationContext.getSystemService(Context.DOWNLOAD_SERVICE));
+            SharedPreferences keeperPreferences = applicationContext.getSharedPreferences(BookKeeper.class.getSimpleName(), Activity.MODE_PRIVATE);
+            IdManager idManager = new IdManager(new ActiveDownloadFetcher(applicationContext), keeperPreferences);
+            WatcherServiceStarter watcherService = new WatcherServiceStarter(applicationContext);
+            bookKeeper = new BookKeeperDelegate(applicationContext, downloadEnqueuer, new DownloadWatcherManager(), idManager, watcherService);
+        }
+        return bookKeeper;
     }
 
     BookKeeperDelegate(Context context, DownloadEnqueuer downloadEnqueuer, DownloadWatcherManager downloadWatcherManager, IdManager idManager, WatcherServiceStarter watcherService) {
@@ -62,6 +70,12 @@ public class BookKeeperDelegate {
     public DownloadId start(Downloadable downloadable) {
         long downloadId = downloadEnqueuer.enqueue(downloadable);
         return new DownloadId(downloadId);
+    }
+
+    public void startListeningForUpdates(DownloadId downloadId, DownloadWatcher downloadWatcher) {
+        ArrayList<DownloadWatcher> downloadWatchers = new ArrayList<DownloadWatcher>();
+        downloadWatchers.add(downloadWatcher);
+        startListeningForUpdates(downloadId, downloadWatchers);
     }
 
     public void startListeningForUpdates(DownloadId downloadId, List<DownloadWatcher> downloadWatchers) {

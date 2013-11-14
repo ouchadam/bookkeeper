@@ -29,8 +29,8 @@ public class ExampleListAdapter extends TypedBaseAdapter<SimpleItem> implements 
 
     private static List<SimpleItem> createAdapterData() {
         List<SimpleItem> data = new ArrayList<SimpleItem>();
-        data.add(new SimpleItem("item one", "http://ipv4.download.thinkbroadband.com/5MB.zip"));
-        data.add(new SimpleItem("item 2", "http://ipv4.download.thinkbroadband.com/5MB.zip"));
+        data.add(new SimpleItem("5mb", "http://ipv4.download.thinkbroadband.com/5MB.zip"));
+        data.add(new SimpleItem("200mb", "http://download.thinkbroadband.com/200MB.zip"));
         return data;
     }
 

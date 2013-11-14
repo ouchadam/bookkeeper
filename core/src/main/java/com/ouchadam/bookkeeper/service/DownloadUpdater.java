@@ -2,6 +2,8 @@ package com.ouchadam.bookkeeper.service;
 
 import android.app.DownloadManager;
 import android.database.Cursor;
+import android.util.Log;
+
 import com.ouchadam.bookkeeper.domain.ProgressValues;
 
 import java.util.ArrayList;
@@ -29,6 +31,7 @@ class DownloadUpdater {
             if (cursor != null) {
                 if (cursor.moveToFirst()) {
                     do {
+                        Log.e("!!!", "watching");
                         long downloadId = cursor.getLong(cursor.getColumnIndex(DownloadManager.COLUMN_ID));
                         if (cursor.getInt(cursor.getColumnIndex(DownloadManager.COLUMN_STATUS)) != DownloadManager.STATUS_SUCCESSFUL) {
                             downloadIds.add(downloadId);

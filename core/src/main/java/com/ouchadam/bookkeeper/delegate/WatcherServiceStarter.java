@@ -5,11 +5,11 @@ import android.content.Context;
 import android.content.Intent;
 import com.ouchadam.bookkeeper.service.WatchService;
 
-class WatcherServiceStarter {
+public class WatcherServiceStarter {
 
     private final Context context;
 
-    WatcherServiceStarter(Context context) {
+    public WatcherServiceStarter(Context context) {
         this.context = context;
     }
 

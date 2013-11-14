@@ -3,6 +3,7 @@ package com.example;
 import android.app.Activity;
 import android.app.Fragment;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,6 +12,7 @@ import android.widget.ListView;
 import com.ouchadam.bookkeeper.domain.DownloadId;
 import com.ouchadam.bookkeeper.domain.Downloadable;
 import com.ouchadam.bookkeeper.Downloader;
+import com.ouchadam.bookkeeper.watcher.AsyncNotificationWatcher;
 import com.ouchadam.bookkeeper.watcher.DownloadWatcher;
 import com.ouchadam.bookkeeper.watcher.ListItemWatcher;
 import com.ouchadam.bookkeeper.watcher.NotificationWatcher;
@@ -48,20 +50,22 @@ public class DemoFragment extends Fragment implements AdapterView.OnItemClickLis
 
     @Override
     public void onItemClick(AdapterView<?> adapterView, View view, int position, long itemId) {
+        Log.e("???", "onItemClick");
         SimpleItem item = adapter.getItem(position);
         Downloadable downloadable = new ExampleDownloadable(item);
 
         DownloadId downloadId = downloader.keep(downloadable);
         downloader.store(downloadId, itemId);
         downloader.watch(downloadId, getDownloadWatchers(itemId, downloadable, downloadId));
+        createNotificationWatcher(downloadable, downloadId);
     }
 
     private DownloadWatcher[] getDownloadWatchers(long itemId, Downloadable downloadable, DownloadId downloadId) {
-        return new DownloadWatcher[]{createNotificationWatcher(downloadable, downloadId), createListItemWatcher(itemId, downloadId)};
+        return new DownloadWatcher[]{createListItemWatcher(itemId, downloadId)};
     }
 
-    private NotificationWatcher createNotificationWatcher(Downloadable downloadable, DownloadId downloadId) {
-        return new NotificationWatcher(getActivity(), downloadable, downloadId);
+    private void createNotificationWatcher(Downloadable downloadable, DownloadId downloadId) {
+        new AsyncNotificationWatcher(getActivity(), downloadable, downloadId).startWatching();
     }
 
     private ListItemWatcher createListItemWatcher(long itemId, DownloadId downloadId) {

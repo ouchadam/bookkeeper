@@ -4,6 +4,9 @@ import android.app.DownloadManager;
 import android.app.IntentService;
 import android.content.Context;
 import android.content.Intent;
+import android.util.Log;
+
+import com.ouchadam.bookkeeper.delegate.WatcherServiceStarter;
 import com.ouchadam.bookkeeper.progress.ProgressUpdater;
 import com.ouchadam.bookkeeper.domain.ProgressValues;
 
@@ -43,4 +46,16 @@ public class WatchService extends IntentService implements FileDownloadProgressW
         progressUpdater.broadcastFinish(downloadId);
     }
 
+    @Override
+    public void onTaskRemoved(Intent rootIntent) {
+        Log.e("???", "Watch Service : onTaskRemoved");
+        super.onTaskRemoved(rootIntent);
+        new WatcherServiceStarter(this).startWatching();
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        Log.e("???", "Watch service On Destroy");
+    }
 }

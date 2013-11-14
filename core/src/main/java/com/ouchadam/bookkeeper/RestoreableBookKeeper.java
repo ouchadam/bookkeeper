@@ -14,7 +14,7 @@ public class RestoreableBookKeeper implements BookKeeper {
     private final BookKeeperDelegate bookKeeperDelegate;
 
     public static RestoreableBookKeeper newInstance(Context context) {
-        BookKeeperDelegate bookKeeperDelegate = BookKeeperDelegate.newInstance(context);
+        BookKeeperDelegate bookKeeperDelegate = BookKeeperDelegate.getInstance(context);
         return new RestoreableBookKeeper(bookKeeperDelegate);
     }
 
