@@ -1,4 +1,4 @@
-package com.ouchadam.bookkeeper.watcher;
+package com.ouchadam.bookkeeper.watcher.notification;
 
 import android.app.Notification;
 import android.app.NotificationManager;

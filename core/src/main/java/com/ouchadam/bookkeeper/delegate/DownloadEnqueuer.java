@@ -3,6 +3,8 @@ package com.ouchadam.bookkeeper.delegate;
 import android.app.DownloadManager;
 import android.net.Uri;
 import android.os.Environment;
+
+import com.ouchadam.bookkeeper.domain.DownloadId;
 import com.ouchadam.bookkeeper.domain.Downloadable;
 
 class DownloadEnqueuer {
@@ -32,4 +34,17 @@ class DownloadEnqueuer {
         return request;
     }
 
+    public void remove(DownloadId... downloadIds) {
+        if (downloadIds.length > 0) {
+            downloadManager.remove(toValues(downloadIds));
+        }
+    }
+
+    private long[] toValues(DownloadId[] downloadIds) {
+        long[] ids = new long[downloadIds.length];
+        for (int index = 0; index < downloadIds.length; index++) {
+            ids[index] = downloadIds[index].value();
+        }
+        return ids;
+    }
 }

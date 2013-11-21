@@ -6,7 +6,7 @@ import com.ouchadam.bookkeeper.*;
 import com.ouchadam.bookkeeper.domain.DownloadId;
 import com.ouchadam.bookkeeper.domain.Downloadable;
 import com.ouchadam.bookkeeper.delegate.IdManager;
-import com.ouchadam.bookkeeper.watcher.DownloadWatcher;
+import com.ouchadam.bookkeeper.DownloadWatcher;
 import com.ouchadam.bookkeeper.watcher.LazyWatcher;
 
 public class DemoActivity extends Activity implements Downloader {

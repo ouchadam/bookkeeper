@@ -1,18 +1,14 @@
 package com.ouchadam.bookkeeper.delegate;
 
-import android.app.Activity;
-import android.app.DownloadManager;
 import android.content.Context;
-import android.content.SharedPreferences;
 
-import com.ouchadam.bookkeeper.BookKeeper;
 import com.ouchadam.bookkeeper.domain.DownloadId;
 import com.ouchadam.bookkeeper.domain.Downloadable;
 import com.ouchadam.bookkeeper.progress.KeeperIntentHandler;
 import com.ouchadam.bookkeeper.progress.OnAllDownloadsFinished;
 import com.ouchadam.bookkeeper.progress.OnDownloadFinishedListener;
 import com.ouchadam.bookkeeper.progress.ProgressReceiver;
-import com.ouchadam.bookkeeper.watcher.DownloadWatcher;
+import com.ouchadam.bookkeeper.DownloadWatcher;
 import com.ouchadam.bookkeeper.watcher.DownloadWatcherManager;
 
 import java.util.ArrayList;
@@ -30,12 +26,7 @@ public class BookKeeperDelegate {
 
     public static BookKeeperDelegate getInstance(Context context) {
         if (bookKeeper == null) {
-            Context applicationContext = context.getApplicationContext();
-            DownloadEnqueuer downloadEnqueuer = new DownloadEnqueuer((DownloadManager) applicationContext.getSystemService(Context.DOWNLOAD_SERVICE));
-            SharedPreferences keeperPreferences = applicationContext.getSharedPreferences(BookKeeper.class.getSimpleName(), Activity.MODE_PRIVATE);
-            IdManager idManager = new IdManager(new ActiveDownloadFetcher(applicationContext), keeperPreferences);
-            WatcherServiceStarter watcherService = new WatcherServiceStarter(applicationContext);
-            bookKeeper = new BookKeeperDelegate(applicationContext, downloadEnqueuer, new DownloadWatcherManager(), idManager, watcherService);
+            bookKeeper = BookKeeperFactory.create(context);
         }
         return bookKeeper;
     }
@@ -105,5 +96,9 @@ public class BookKeeperDelegate {
 
     public void restore(IdManager.BookKeeperRestorer bookKeeperRestorer) {
         idManager.restore(bookKeeperRestorer);
+    }
+
+    public void delete(DownloadId... downloadIds) {
+        downloadEnqueuer.remove(downloadIds);
     }
 }

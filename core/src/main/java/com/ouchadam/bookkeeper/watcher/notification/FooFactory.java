@@ -1,4 +1,4 @@
-package com.ouchadam.bookkeeper.watcher;
+package com.ouchadam.bookkeeper.watcher.notification;
 
 import android.app.Notification;
 import android.app.NotificationManager;
@@ -10,16 +10,16 @@ import com.ouchadam.bookkeeper.delegate.BookKeeperDelegate;
 class FooFactory implements DownloadTypeFetcher {
 
     private final WatchCounter watchCounter;
-    private final ServiceExposer serviceExposer;
+    private final ServiceStateExposer serviceStateExposer;
 
     private BookKeeperDelegate bookKeeper;
     private Notification.Builder notification;
     private NotificationBuilder notificationBuilder;
 
 
-    public FooFactory(ServiceExposer serviceExposer) {
+    public FooFactory(ServiceStateExposer serviceStateExposer) {
         this.watchCounter = new WatchCounter();
-        this.serviceExposer = serviceExposer;
+        this.serviceStateExposer = serviceStateExposer;
     }
 
     public void lazyInit(Context context) {
@@ -35,7 +35,7 @@ class FooFactory implements DownloadTypeFetcher {
         NotificationDataHolder notificationDataHolder = NotificationDataHolder.from(intent, notificationBuilder, notification);
         watchCounter.add(notificationDataHolder);
         bookKeeper.startListeningForUpdates(notificationDataHolder.getDownloadId(), new InnerDownloadWatcher(this, notificationDataHolder, onFinishCallback));
-        serviceExposer.onStartForeground(NotificationBuilder.NOTIFICATION_ID, getInitialNotification(notificationDataHolder));
+        serviceStateExposer.onStartForeground(NotificationBuilder.NOTIFICATION_ID, getInitialNotification(notificationDataHolder));
     }
 
     private Notification getInitialNotification(NotificationDataHolder notificationDataHolder) {
@@ -80,8 +80,8 @@ class FooFactory implements DownloadTypeFetcher {
 
     public void handleFinish() {
         if (watchCounter.isEmpty()) {
-            serviceExposer.onStopForeground(false);
-            serviceExposer.onStopService();
+            serviceStateExposer.onStopForeground(false);
+            serviceStateExposer.onStopService();
         } else if (watchCounter.isSingle()) {
             notificationBuilder.notifyManager(createInitialNotification(notification, watchCounter.getLastHolder()));
         } else {

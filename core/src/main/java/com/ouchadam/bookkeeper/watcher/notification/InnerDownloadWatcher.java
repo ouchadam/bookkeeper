@@ -1,9 +1,10 @@
-package com.ouchadam.bookkeeper.watcher;
+package com.ouchadam.bookkeeper.watcher.notification;
 
 import android.app.Notification;
 
 import com.ouchadam.bookkeeper.domain.DownloadId;
 import com.ouchadam.bookkeeper.domain.ProgressValues;
+import com.ouchadam.bookkeeper.DownloadWatcher;
 
 class InnerDownloadWatcher implements DownloadWatcher {
 

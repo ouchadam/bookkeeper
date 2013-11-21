@@ -2,6 +2,8 @@ package com.ouchadam.bookkeeper.watcher;
 
 import android.view.View;
 import android.widget.ProgressBar;
+
+import com.ouchadam.bookkeeper.DownloadWatcher;
 import com.ouchadam.bookkeeper.domain.DownloadId;
 import com.ouchadam.bookkeeper.domain.ProgressValues;
 

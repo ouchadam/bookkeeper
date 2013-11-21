@@ -12,10 +12,9 @@ import android.widget.ListView;
 import com.ouchadam.bookkeeper.domain.DownloadId;
 import com.ouchadam.bookkeeper.domain.Downloadable;
 import com.ouchadam.bookkeeper.Downloader;
-import com.ouchadam.bookkeeper.watcher.AsyncNotificationWatcher;
-import com.ouchadam.bookkeeper.watcher.DownloadWatcher;
+import com.ouchadam.bookkeeper.watcher.notification.AsyncNotificationWatcher;
+import com.ouchadam.bookkeeper.DownloadWatcher;
 import com.ouchadam.bookkeeper.watcher.ListItemWatcher;
-import com.ouchadam.bookkeeper.watcher.NotificationWatcher;
 
 public class DemoFragment extends Fragment implements AdapterView.OnItemClickListener {
 

@@ -1,8 +1,8 @@
-package com.ouchadam.bookkeeper.watcher;
+package com.ouchadam.bookkeeper.watcher.notification;
 
 import android.app.Notification;
 
-public interface ServiceExposer {
+public interface ServiceStateExposer {
     void onStartForeground(int notificationId, Notification notification);
     void onStopForeground(boolean removeNotification);
     void onStopService();

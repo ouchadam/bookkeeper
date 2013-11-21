@@ -1,5 +1,6 @@
 package com.ouchadam.bookkeeper.watcher;
 
+import com.ouchadam.bookkeeper.DownloadWatcher;
 import com.ouchadam.bookkeeper.domain.DownloadId;
 import com.ouchadam.bookkeeper.domain.ProgressValues;
 import com.ouchadam.bookkeeper.watcher.adapter.ListItemProgress;

@@ -1,4 +1,4 @@
-package com.ouchadam.bookkeeper.watcher;
+package com.ouchadam.bookkeeper.watcher.notification;
 
 import java.util.ArrayList;
 import java.util.List;

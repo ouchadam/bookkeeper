@@ -1,4 +1,4 @@
-package com.ouchadam.bookkeeper.watcher;
+package com.ouchadam.bookkeeper.watcher.notification;
 
 import android.app.Notification;
 import android.app.Service;
@@ -6,7 +6,7 @@ import android.content.Intent;
 import android.os.IBinder;
 import android.util.Log;
 
-public class DownloadNotificationService extends Service implements ServiceExposer {
+public class DownloadNotificationServiceState extends Service implements ServiceStateExposer {
 
     public static final String ACTION_START = "start";
     public static final String TITLE = "title";
@@ -19,7 +19,7 @@ public class DownloadNotificationService extends Service implements ServiceExpos
         return null;
     }
 
-    public DownloadNotificationService() {
+    public DownloadNotificationServiceState() {
         fooFactory = new FooFactory(this);
     }
 

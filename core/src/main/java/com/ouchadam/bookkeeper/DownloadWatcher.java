@@ -1,4 +1,4 @@
-package com.ouchadam.bookkeeper.watcher;
+package com.ouchadam.bookkeeper;
 
 import com.ouchadam.bookkeeper.domain.DownloadId;
 import com.ouchadam.bookkeeper.domain.ProgressValues;

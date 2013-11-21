@@ -5,7 +5,6 @@ import com.ouchadam.bookkeeper.domain.DownloadId;
 import com.ouchadam.bookkeeper.domain.Downloadable;
 import com.ouchadam.bookkeeper.delegate.BookKeeperDelegate;
 import com.ouchadam.bookkeeper.delegate.IdManager;
-import com.ouchadam.bookkeeper.watcher.DownloadWatcher;
 
 import java.util.Arrays;
 
@@ -30,6 +29,11 @@ public class RestoreableBookKeeper implements BookKeeper {
     @Override
     public void watch(DownloadId downloadId, DownloadWatcher... downloadWatchers) {
         bookKeeperDelegate.startListeningForUpdates(downloadId, Arrays.asList(downloadWatchers));
+    }
+
+    @Override
+    public void delete(DownloadId... downloadIds) {
+        bookKeeperDelegate.delete(downloadIds);
     }
 
     public void restore(IdManager.BookKeeperRestorer bookKeeperRestorer) {

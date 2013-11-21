@@ -1,4 +1,4 @@
-package com.ouchadam.bookkeeper.watcher;
+package com.ouchadam.bookkeeper.watcher.notification;
 
 import android.app.Notification;
 import android.content.Intent;
@@ -30,11 +30,11 @@ class NotificationDataHolder {
     }
 
     private static String getTitleFrom(Intent intent) {
-        return intent.getStringExtra(DownloadNotificationService.TITLE);
+        return intent.getStringExtra(DownloadNotificationServiceState.TITLE);
     }
 
     private static long getDownloadIdFrom(Intent intent) {
-        return intent.getLongExtra(DownloadNotificationService.DOWNLOAD_ID, -1L);
+        return intent.getLongExtra(DownloadNotificationServiceState.DOWNLOAD_ID, -1L);
     }
 
     public DownloadId getDownloadId() {

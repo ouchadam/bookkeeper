@@ -1,8 +1,7 @@
-package com.ouchadam.bookkeeper.watcher;
+package com.ouchadam.bookkeeper.watcher.notification;
 
 import android.content.Context;
 import android.content.Intent;
-import android.util.Log;
 
 import com.ouchadam.bookkeeper.domain.DownloadId;
 import com.ouchadam.bookkeeper.domain.Downloadable;
@@ -32,10 +31,10 @@ public class AsyncNotificationWatcher {
         }
 
         public void onStart(Downloadable downloadable, DownloadId downloadId) {
-            Intent intent = new Intent(context, DownloadNotificationService.class);
-            intent.setAction(DownloadNotificationService.ACTION_START);
-            intent.putExtra(DownloadNotificationService.TITLE, downloadable.title());
-            intent.putExtra(DownloadNotificationService.DOWNLOAD_ID, downloadId.value());
+            Intent intent = new Intent(context, DownloadNotificationServiceState.class);
+            intent.setAction(DownloadNotificationServiceState.ACTION_START);
+            intent.putExtra(DownloadNotificationServiceState.TITLE, downloadable.title());
+            intent.putExtra(DownloadNotificationServiceState.DOWNLOAD_ID, downloadId.value());
             context.startService(intent);
         }
 

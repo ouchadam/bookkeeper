@@ -11,7 +11,7 @@ import java.util.List;
 
 class DownloadUpdater {
 
-    private static final int REQUERY_PAUSE_MS = 100;
+    private static final int REQUERY_PAUSE_MS = 500;
 
     private final DownloadManager downloadManager;
     private final FileDownloadProgressWatcher progressWatcher;

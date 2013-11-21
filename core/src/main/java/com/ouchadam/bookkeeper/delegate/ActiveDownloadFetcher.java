@@ -11,27 +11,31 @@ import java.util.List;
 
 class ActiveDownloadFetcher {
 
-    private final Context context;
+    private final DownloadManager downloadManager;
 
     public interface OnActiveDownloads {
         void on(List<DownloadId> activeDownloadIds);
     }
 
-    public ActiveDownloadFetcher(Context context) {
-        this.context = context;
+    public static ActiveDownloadFetcher from(Context context) {
+        DownloadManager downloadManager = (DownloadManager) context.getSystemService(Context.DOWNLOAD_SERVICE);
+        return new ActiveDownloadFetcher(downloadManager);
+    }
+
+    ActiveDownloadFetcher(DownloadManager downloadManager) {
+        this.downloadManager = downloadManager;
     }
 
     public void getActiveDownloadIds(OnActiveDownloads onActiveDownloads) {
-        DownloadManager downloadManager = (DownloadManager) context.getSystemService(Context.DOWNLOAD_SERVICE);
-        new InnerTask(onActiveDownloads, downloadManager).start();
+        new ActiveDownloadFetcherTask(onActiveDownloads, downloadManager).start();
     }
 
-    private static class InnerTask extends AsyncTask<Void, Void, List<DownloadId>> {
+    private static class ActiveDownloadFetcherTask extends AsyncTask<Void, Void, List<DownloadId>> {
 
         private final OnActiveDownloads onActiveDownloads;
         private DownloadManager downloadManager;
 
-        private InnerTask(OnActiveDownloads onActiveDownloads, DownloadManager downloadManager) {
+        private ActiveDownloadFetcherTask(OnActiveDownloads onActiveDownloads, DownloadManager downloadManager) {
             this.onActiveDownloads = onActiveDownloads;
             this.downloadManager = downloadManager;
         }
