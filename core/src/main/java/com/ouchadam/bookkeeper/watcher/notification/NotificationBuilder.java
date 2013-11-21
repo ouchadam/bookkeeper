@@ -3,7 +3,6 @@ package com.ouchadam.bookkeeper.watcher.notification;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.content.Context;
-import android.database.sqlite.SQLiteOpenHelper;
 import android.os.Build;
 
 class NotificationBuilder {

@@ -20,6 +20,7 @@ public class DemoFragment extends Fragment implements AdapterView.OnItemClickLis
 
     private ExampleListAdapter adapter;
     private Downloader downloader;
+    private ListView listView;
 
     @Override
     public void onAttach(Activity activity) {
@@ -35,11 +36,18 @@ public class DemoFragment extends Fragment implements AdapterView.OnItemClickLis
     }
 
     private void initList(View view) {
-        ListView listView = (ListView) view.findViewById(R.id.list_view);
-        adapter = new ExampleListAdapter(LayoutInflater.from(getActivity()));
+        listView = (ListView) view.findViewById(R.id.list_view);
+        adapter = new ExampleListAdapter(LayoutInflater.from(getActivity()), new ItemManipulator(childFetcher));
         listView.setAdapter(adapter);
         listView.setOnItemClickListener(this);
     }
+
+    private final ExampleListAdapter.ChildFetcher childFetcher = new ExampleListAdapter.ChildFetcher() {
+        @Override
+        public View getChildAt(int itemIdPosition) {
+            return listView.getChildAt(itemIdPosition - listView.getFirstVisiblePosition());
+        }
+    };
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {

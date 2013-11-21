@@ -16,7 +16,7 @@ public class ListItemWatcher implements DownloadWatcher {
     public interface ItemWatcher {
         void setStageFor(long itemId, ListItemProgress.Stage stage);
         void updateProgressValuesFor(long itemId, ProgressValues progressValues);
-        void notifyAdapter();
+        void notifyItem(long itemId, ListItemProgress.Stage stop);
     }
 
     public ListItemWatcher(ItemWatcher itemWatcher, long itemId, DownloadId downloadId) {
@@ -34,20 +34,20 @@ public class ListItemWatcher implements DownloadWatcher {
     @Override
     public void onStart() {
         itemWatcher.setStageFor(itemId, START);
-        itemWatcher.notifyAdapter();
+        itemWatcher.notifyItem(itemId, START);
     }
 
     @Override
     public void onUpdate(ProgressValues progressValues) {
         itemWatcher.setStageFor(itemId, UPDATING);
         itemWatcher.updateProgressValuesFor(itemId, progressValues);
-        itemWatcher.notifyAdapter();
+        itemWatcher.notifyItem(itemId, UPDATING);
     }
 
     @Override
     public void onStop() {
         itemWatcher.setStageFor(itemId, STOP);
-        itemWatcher.notifyAdapter();
+        itemWatcher.notifyItem(itemId, STOP);
     }
 
 }

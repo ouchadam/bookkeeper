@@ -5,6 +5,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+
 import com.ouchadam.bookkeeper.domain.ProgressValues;
 import com.ouchadam.bookkeeper.watcher.ListItemWatcher;
 import com.ouchadam.bookkeeper.watcher.adapter.ProgressDelegate;
@@ -20,9 +21,15 @@ public class ExampleListAdapter extends TypedBaseAdapter<SimpleItem> implements 
     private final LayoutInflater layoutInflater;
     private final List<SimpleItem> data;
     private final ProgressDelegate<ViewHolder> progressDelegate;
+    private final ItemManipulator itemManipulator;
 
-    public ExampleListAdapter(LayoutInflater layoutInflater) {
+    public interface ChildFetcher {
+        View getChildAt(int itemIdPosition);
+    }
+
+    public ExampleListAdapter(LayoutInflater layoutInflater, ItemManipulator itemManipulator) {
         this.layoutInflater = layoutInflater;
+        this.itemManipulator = itemManipulator;
         this.data = createAdapterData();
         this.progressDelegate = new ItemProgressManager(this);
     }
@@ -57,9 +64,13 @@ public class ExampleListAdapter extends TypedBaseAdapter<SimpleItem> implements 
         progressDelegate.handleDownloadProgress(position, viewHolder);
         Stage stage = progressDelegate.getStage(position);
         if (stage == Stage.IDLE) {
-            viewHolder.textView.setText(getItem(position).getTitle());
+            initIdle(position, viewHolder);
         }
         return view;
+    }
+
+    private void initIdle(int position, ViewHolder viewHolder) {
+        viewHolder.textView.setText(getItem(position).getTitle());
     }
 
     private View createView(View convertView, ViewGroup viewGroup) {
@@ -94,8 +105,33 @@ public class ExampleListAdapter extends TypedBaseAdapter<SimpleItem> implements 
     }
 
     @Override
-    public void notifyAdapter() {
-        notifyDataSetChanged();
+    public void notifyItem(long itemId, Stage stage) {
+        try {
+            handleWatcherUpdate(itemId, stage);
+        } catch (ItemManipulator.ViewHolderNotFoundException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void handleWatcherUpdate(long itemId, Stage stage) throws ItemManipulator.ViewHolderNotFoundException {
+        ViewHolder viewHolder = getItemViewHolder(itemId);
+        progressDelegate.handleDownloadProgress(getPositionFor(itemId), viewHolder);
+        if (stage == Stage.IDLE) {
+            initIdle(getPositionFor(itemId), viewHolder);
+        }
+    }
+
+    private ViewHolder getItemViewHolder(long itemId) throws ItemManipulator.ViewHolderNotFoundException {
+        return itemManipulator.getItemViewHolder(getPositionFor(itemId));
+    }
+
+    private int getPositionFor(long itemId) {
+        for (int index = 0; index < getCount(); index++) {
+            if (getItemId(index) == itemId) {
+                return index;
+            }
+        }
+        return 0;
     }
 
     public static class ViewHolder {
