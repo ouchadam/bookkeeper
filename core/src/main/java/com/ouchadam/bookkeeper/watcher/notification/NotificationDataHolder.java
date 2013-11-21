@@ -61,7 +61,12 @@ class NotificationDataHolder {
         return result;
     }
 
-    public int notificationId() {
+    public int getOngoingNotificationId() {
         return hashCode();
     }
+
+    public int getDownloadedNotificationId() {
+        return (int) downloadId.value();
+    }
+
 }

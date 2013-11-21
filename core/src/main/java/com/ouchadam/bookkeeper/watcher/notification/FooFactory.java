@@ -2,7 +2,6 @@ package com.ouchadam.bookkeeper.watcher.notification;
 
 import android.content.Context;
 import android.content.Intent;
-import android.util.Log;
 
 import com.ouchadam.bookkeeper.delegate.BookKeeperDelegate;
 import com.ouchadam.bookkeeper.domain.DownloadId;
@@ -54,7 +53,7 @@ class FooFactory implements DownloadTypeFetcher {
         }
 
         public void startForeground(ServiceStateExposer serviceStateExposer) {
-            serviceStateExposer.onStartForeground(data.notificationId(), builder.buildInitial(data));
+            serviceStateExposer.onStartForeground(data.getOngoingNotificationId(), builder.buildInitial(data));
         }
 
         public void showInitial() {
@@ -67,6 +66,10 @@ class FooFactory implements DownloadTypeFetcher {
 
         public void updateNotificationProgress(int percentage, int downloaded, int total) {
             builder.updateNotificationProgress(data, percentage, downloaded, total);
+        }
+
+        public void showDownloaded() {
+            builder.setDownloaded(data);
         }
     }
 
@@ -83,6 +86,7 @@ class FooFactory implements DownloadTypeFetcher {
         @Override
         public void onFinish(NotificationItem notificationItem) {
             watchCounter.remove(notificationItem.data);
+            notificationItem.showDownloaded();
             handleFinish();
         }
     };
@@ -105,7 +109,7 @@ class FooFactory implements DownloadTypeFetcher {
     }
 
     private void stopForeground() {
-        serviceStateExposer.onStopForeground(false);
+        serviceStateExposer.onStopForeground(true);
         this.isForeground = false;
     }
 

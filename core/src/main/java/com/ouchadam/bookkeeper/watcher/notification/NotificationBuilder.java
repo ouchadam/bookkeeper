@@ -3,6 +3,7 @@ package com.ouchadam.bookkeeper.watcher.notification;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.content.Context;
+import android.database.sqlite.SQLiteOpenHelper;
 import android.os.Build;
 
 class NotificationBuilder {
@@ -45,7 +46,7 @@ class NotificationBuilder {
     }
 
     private void notifyManager(NotificationDataHolder notificationDataHolder, Notification.Builder notification) {
-        notificationManager.notify(notificationDataHolder.notificationId(), build(notification));
+        notificationManager.notify(notificationDataHolder.getOngoingNotificationId(), build(notification));
     }
 
     private Notification build(Notification.Builder notification) {
@@ -80,6 +81,20 @@ class NotificationBuilder {
     }
 
     public void dismiss(NotificationDataHolder notificationDataHolder) {
-        notificationManager.cancel(notificationDataHolder.notificationId());
+        notificationManager.cancel(notificationDataHolder.getOngoingNotificationId());
+    }
+
+    public void setDownloaded(NotificationDataHolder data) {
+        notificationManager.cancel(data.getOngoingNotificationId());
+        notificationManager.notify(data.getDownloadedNotificationId(), createDownloaded(data));
+    }
+
+    private Notification createDownloaded(NotificationDataHolder data) {
+        builder.setSmallIcon(android.R.drawable.stat_sys_download_done);
+        builder.setContentTitle(data.getTitle() + " downloaded");
+        builder.setOngoing(false);
+        builder.setContentText("");
+        builder.setProgress(0, 0, false);
+        return build(builder);
     }
 }
