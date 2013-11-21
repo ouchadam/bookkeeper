@@ -36,11 +36,7 @@ class FooFactory implements DownloadTypeFetcher {
     private final InnerDownloadWatcher.OnFinishCallback onFinishCallback = new InnerDownloadWatcher.OnFinishCallback() {
         @Override
         public void onFinish(NotificationDataHolder notificationDataHolder) {
-            Log.e("!!!", "download finished");
-            Log.e("!!!", "watch counter is  at : " + watchCounter.getCount());
             watchCounter.remove(notificationDataHolder);
-            Log.e("!!!", "watch counter is at after remove : " + watchCounter.getCount());
-
             handleFinish();
         }
     };
@@ -49,13 +45,11 @@ class FooFactory implements DownloadTypeFetcher {
         if (watchCounter.isEmpty()) {
             allDownloadsFinished();
         } else {
-            Log.e("!!!", "setting initial");
             notificationBuilder.setInitial(watchCounter);
         }
     }
 
     private void allDownloadsFinished() {
-        Log.e("!!!", "all downloads finished");
         serviceStateExposer.onStopForeground(true);
         serviceStateExposer.onStopService();
     }
