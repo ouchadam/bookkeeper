@@ -5,7 +5,7 @@ import android.os.Bundle;
 
 import com.ouchadam.bookkeeper.DownloadWatcher;
 import com.ouchadam.bookkeeper.Downloader;
-import com.ouchadam.bookkeeper.delegate.BookKeeperRestorer;
+import com.ouchadam.bookkeeper.BookKeeperRestorer;
 import com.ouchadam.bookkeeper.delegate.RestoreableBookKeeper;
 import com.ouchadam.bookkeeper.domain.DownloadId;
 import com.ouchadam.bookkeeper.domain.Downloadable;

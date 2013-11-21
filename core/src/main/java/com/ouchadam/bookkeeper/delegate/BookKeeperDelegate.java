@@ -2,6 +2,7 @@ package com.ouchadam.bookkeeper.delegate;
 
 import android.content.Context;
 
+import com.ouchadam.bookkeeper.BookKeeperRestorer;
 import com.ouchadam.bookkeeper.domain.DownloadId;
 import com.ouchadam.bookkeeper.domain.Downloadable;
 import com.ouchadam.bookkeeper.progress.KeeperIntentHandler;

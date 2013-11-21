@@ -1,4 +1,4 @@
-package com.ouchadam.bookkeeper.delegate;
+package com.ouchadam.bookkeeper;
 
 import com.ouchadam.bookkeeper.domain.DownloadId;
 

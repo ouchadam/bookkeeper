@@ -1,6 +1,5 @@
 package com.ouchadam.bookkeeper.watcher.notification;
 
-import android.app.Notification;
 import android.content.Intent;
 
 import com.ouchadam.bookkeeper.domain.DownloadId;
@@ -9,24 +8,20 @@ class NotificationDataHolder {
 
     private final String title;
     private final DownloadId downloadId;
-    private final NotificationBuilder notificationBuilder;
-    private final Notification.Builder notification;
 
-    public NotificationDataHolder(String title, DownloadId downloadId, NotificationBuilder notificationBuilder, Notification.Builder notification) {
+    public NotificationDataHolder(String title, DownloadId downloadId) {
         this.title = title;
         this.downloadId = downloadId;
-        this.notificationBuilder = notificationBuilder;
-        this.notification = notification;
     }
 
     public boolean isWatching(DownloadId downloadId) {
         return this.downloadId.equals(downloadId);
     }
 
-    public static NotificationDataHolder from(Intent intent, NotificationBuilder notificationBuilder, Notification.Builder notification) {
+    public static NotificationDataHolder from(Intent intent) {
         String title = getTitleFrom(intent);
         DownloadId downloadId = new DownloadId(getDownloadIdFrom(intent));
-        return new NotificationDataHolder(title, downloadId, notificationBuilder, notification);
+        return new NotificationDataHolder(title, downloadId);
     }
 
     private static String getTitleFrom(Intent intent) {
@@ -41,15 +36,28 @@ class NotificationDataHolder {
         return downloadId;
     }
 
-    public void updateNotification() {
-        notificationBuilder.notifyManager(notification);
-    }
-
     public String getTitle() {
         return title;
     }
 
-    public Notification.Builder getNotification() {
-        return notification;
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        NotificationDataHolder that = (NotificationDataHolder) o;
+
+        if (downloadId != null ? !downloadId.equals(that.downloadId) : that.downloadId != null)
+            return false;
+        if (title != null ? !title.equals(that.title) : that.title != null) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = title != null ? title.hashCode() : 0;
+        result = 31 * result + (downloadId != null ? downloadId.hashCode() : 0);
+        return result;
     }
 }

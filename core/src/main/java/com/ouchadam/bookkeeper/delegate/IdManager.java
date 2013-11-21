@@ -1,6 +1,8 @@
 package com.ouchadam.bookkeeper.delegate;
 
 import android.content.SharedPreferences;
+
+import com.ouchadam.bookkeeper.BookKeeperRestorer;
 import com.ouchadam.bookkeeper.domain.DownloadId;
 import com.ouchadam.bookkeeper.progress.OnDownloadFinishedListener;
 
