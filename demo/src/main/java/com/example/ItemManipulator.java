@@ -4,9 +4,9 @@ import android.view.View;
 
 class ItemManipulator {
 
-    private final ExampleListAdapter.ChildFetcher childFetcher;
+    private final ChildFetcher childFetcher;
 
-    public ItemManipulator(ExampleListAdapter.ChildFetcher childFetcher) {
+    public ItemManipulator(ChildFetcher childFetcher) {
         this.childFetcher = childFetcher;
     }
 

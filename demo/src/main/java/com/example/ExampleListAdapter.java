@@ -23,10 +23,6 @@ public class ExampleListAdapter extends TypedBaseAdapter<SimpleItem> implements 
     private final ProgressDelegate<ViewHolder> progressDelegate;
     private final ItemManipulator itemManipulator;
 
-    public interface ChildFetcher {
-        View getChildAt(int itemIdPosition);
-    }
-
     public ExampleListAdapter(LayoutInflater layoutInflater, ItemManipulator itemManipulator) {
         this.layoutInflater = layoutInflater;
         this.itemManipulator = itemManipulator;

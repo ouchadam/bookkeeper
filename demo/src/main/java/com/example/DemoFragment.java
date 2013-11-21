@@ -42,7 +42,7 @@ public class DemoFragment extends Fragment implements AdapterView.OnItemClickLis
         listView.setOnItemClickListener(this);
     }
 
-    private final ExampleListAdapter.ChildFetcher childFetcher = new ExampleListAdapter.ChildFetcher() {
+    private final ChildFetcher childFetcher = new ChildFetcher() {
         @Override
         public View getChildAt(int itemIdPosition) {
             return listView.getChildAt(itemIdPosition - listView.getFirstVisiblePosition());
