@@ -60,4 +60,8 @@ class NotificationDataHolder {
         result = 31 * result + (downloadId != null ? downloadId.hashCode() : 0);
         return result;
     }
+
+    public int notificationId() {
+        return hashCode();
+    }
 }

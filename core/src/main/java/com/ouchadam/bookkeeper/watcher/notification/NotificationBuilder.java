@@ -7,8 +7,6 @@ import android.os.Build;
 
 class NotificationBuilder {
 
-    public static final int NOTIFICATION_ID = 0xAA;
-
     private static final int PROGRESS_MAX = 100;
     private static final boolean DETERMINATE_PROGRESS = false;
 
@@ -26,17 +24,14 @@ class NotificationBuilder {
         this.builder = builder;
     }
 
-    public void updateNotificationProgress(int percentage, int downloaded, int total) {
+    public void updateNotificationProgress(NotificationDataHolder notificationDataHolder, int percentage, int downloaded, int total) {
+        builder.setContentTitle(getContentTitle(notificationDataHolder));
         builder.setProgress(PROGRESS_MAX, percentage, DETERMINATE_PROGRESS);
         builder.setContentText(getProgressContentText(downloaded, total));
-        update();
+        update(notificationDataHolder);
     }
 
-    public void update() {
-        notifyManager(builder);
-    }
-
-    protected String getProgressContentText(int downloadedInBits, int totalDownloadedSizeInBits) {
+    private String getProgressContentText(int downloadedInBits, int totalDownloadedSizeInBits) {
         return "Downloaded " + bitsToMegabytes(downloadedInBits) + " out of " + bitsToMegabytes(totalDownloadedSizeInBits);
     }
 
@@ -45,8 +40,12 @@ class NotificationBuilder {
         return String.format("%.2f", i) + "mb";
     }
 
-    private void notifyManager(Notification.Builder notification) {
-        notificationManager.notify(NOTIFICATION_ID, build(notification));
+    public void update(NotificationDataHolder notificationDataHolder) {
+        notifyManager(notificationDataHolder, builder);
+    }
+
+    private void notifyManager(NotificationDataHolder notificationDataHolder, Notification.Builder notification) {
+        notificationManager.notify(notificationDataHolder.notificationId(), build(notification));
     }
 
     private Notification build(Notification.Builder notification) {
@@ -56,39 +55,31 @@ class NotificationBuilder {
         return notification.getNotification();
     }
 
-    private Notification.Builder createDefault(WatchCounter watchCounter, Notification.Builder notification) {
-        notification.setSmallIcon(android.R.drawable.stat_notify_sync_noanim);
-        notification.setOngoing(true);
-        notification.setContentText(getContentText(watchCounter));
-        notification.setProgress(0, 0, !watchCounter.isSingle());
-        return notification;
+    private String getContentTitle(NotificationDataHolder notificationDataHolder) {
+        return notificationDataHolder.getTitle();
     }
 
-    private String getContentText(WatchCounter watchCounter) {
-        if (watchCounter.isSingle()) {
-            return "Downloading...";
-        }
-        return "";
+    public Notification buildInitial(NotificationDataHolder notificationDataHolder) {
+        return build(getInitialNotification(notificationDataHolder));
     }
 
-    private String getContentTitle(WatchCounter watchCounter, NotificationDataHolder notificationDataHolder) {
-        if (watchCounter.isSingle()) {
-            return notificationDataHolder.getTitle();
-        }
-        return watchCounter.getCount() + " downloads in progress";
-    }
-
-    public Notification buildInitial(WatchCounter watchCounter) {
-        return build(getInitialNotification(watchCounter));
-    }
-
-    private Notification.Builder getInitialNotification(WatchCounter watchCounter) {
-        Notification.Builder defaultNotification = createDefault(watchCounter, builder);
-        defaultNotification.setContentTitle(getContentTitle(watchCounter, watchCounter.getLastHolder()));
+    private Notification.Builder getInitialNotification(NotificationDataHolder notificationDataHolder) {
+        Notification.Builder defaultNotification = createDefaultDownloading(builder);
+        defaultNotification.setContentTitle(getContentTitle(notificationDataHolder));
         return defaultNotification;
     }
 
-    public void setInitial(WatchCounter watchCounter) {
-        notifyManager(getInitialNotification(watchCounter));
+    private Notification.Builder createDefaultDownloading(Notification.Builder notification) {
+        notification.setSmallIcon(android.R.drawable.stat_sys_download);
+        notification.setOngoing(true);
+        return notification;
+    }
+
+    public void setInitial(NotificationDataHolder notificationDataHolder) {
+        notifyManager(notificationDataHolder, getInitialNotification(notificationDataHolder));
+    }
+
+    public void dismiss(NotificationDataHolder notificationDataHolder) {
+        notificationManager.cancel(notificationDataHolder.notificationId());
     }
 }
