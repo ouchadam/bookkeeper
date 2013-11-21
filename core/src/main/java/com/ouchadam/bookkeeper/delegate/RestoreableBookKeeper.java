@@ -1,10 +1,11 @@
-package com.ouchadam.bookkeeper;
+package com.ouchadam.bookkeeper.delegate;
 
 import android.content.Context;
+
+import com.ouchadam.bookkeeper.BookKeeper;
+import com.ouchadam.bookkeeper.DownloadWatcher;
 import com.ouchadam.bookkeeper.domain.DownloadId;
 import com.ouchadam.bookkeeper.domain.Downloadable;
-import com.ouchadam.bookkeeper.delegate.BookKeeperDelegate;
-import com.ouchadam.bookkeeper.delegate.IdManager;
 
 import java.util.Arrays;
 
@@ -36,7 +37,7 @@ public class RestoreableBookKeeper implements BookKeeper {
         bookKeeperDelegate.delete(downloadIds);
     }
 
-    public void restore(IdManager.BookKeeperRestorer bookKeeperRestorer) {
+    public void restore(BookKeeperRestorer bookKeeperRestorer) {
         bookKeeperDelegate.restore(bookKeeperRestorer);
     }
 

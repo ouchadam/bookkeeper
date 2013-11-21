@@ -94,7 +94,7 @@ public class BookKeeperDelegate {
         idManager.addWithItem(downloadId, itemId);
     }
 
-    public void restore(IdManager.BookKeeperRestorer bookKeeperRestorer) {
+    public void restore(BookKeeperRestorer bookKeeperRestorer) {
         idManager.restore(bookKeeperRestorer);
     }
 

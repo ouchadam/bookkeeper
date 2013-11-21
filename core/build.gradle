@@ -2,7 +2,7 @@ apply plugin: 'android-library'
 
 android {
 
-    compileSdkVersion 18
+    compileSdkVersion 19
     buildToolsVersion "18.1.1"
 
 }

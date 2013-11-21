@@ -8,14 +8,10 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-public class IdManager implements OnDownloadFinishedListener {
+class IdManager implements OnDownloadFinishedListener {
 
     private final ActiveDownloadFetcher downloaderHelper;
     private final SharedPreferences sharedPreferences;
-
-    public interface BookKeeperRestorer {
-        void onRestore(DownloadId downloadId, long itemId);
-    }
 
     IdManager(ActiveDownloadFetcher downloaderHelper, SharedPreferences sharedPreferences) {
         this.downloaderHelper = downloaderHelper;
