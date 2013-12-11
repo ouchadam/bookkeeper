@@ -12,7 +12,7 @@ class BookKeeperFactory {
 
     public static BookKeeperDelegate create(Context context) {
         Context applicationContext = context.getApplicationContext();
-        DownloadEnqueuer downloadEnqueuer = new DownloadEnqueuer((DownloadManager) applicationContext.getSystemService(Context.DOWNLOAD_SERVICE));
+        DownloadEnqueuer downloadEnqueuer = new DownloadEnqueuer((DownloadManager) applicationContext.getSystemService(Context.DOWNLOAD_SERVICE), new FileNameEnforcer());
         SharedPreferences keeperPreferences = applicationContext.getSharedPreferences(BookKeeper.class.getSimpleName(), Activity.MODE_PRIVATE);
         IdManager idManager = new IdManager(ActiveDownloadFetcher.from(applicationContext), keeperPreferences);
         WatcherServiceStarter watcherService = new WatcherServiceStarter(applicationContext);

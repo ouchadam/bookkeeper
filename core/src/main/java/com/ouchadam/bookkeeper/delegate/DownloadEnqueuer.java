@@ -10,13 +10,15 @@ import com.ouchadam.bookkeeper.domain.Downloadable;
 class DownloadEnqueuer {
 
     private final DownloadManager downloadManager;
+    private final FileNameEnforcer fileNameEnforcer;
 
-    DownloadEnqueuer(DownloadManager downloadManager) {
+    DownloadEnqueuer(DownloadManager downloadManager, FileNameEnforcer fileNameEnforcer) {
         this.downloadManager = downloadManager;
+        this.fileNameEnforcer = fileNameEnforcer;
     }
 
     public long enqueue(Downloadable downloadable) {
-        return start(downloadable.url(), downloadable.fileName(), downloadable.title(), downloadable.description());
+        return start(downloadable.url(), fileNameEnforcer.enforce(downloadable.fileName()), downloadable.title(), downloadable.description());
     }
 
     private long start(Uri url, String file, String title, String description) {
@@ -47,4 +49,5 @@ class DownloadEnqueuer {
         }
         return ids;
     }
+
 }
