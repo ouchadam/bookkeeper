@@ -102,4 +102,5 @@ public class BookKeeperDelegate {
     public void delete(DownloadId... downloadIds) {
         downloadEnqueuer.remove(downloadIds);
     }
+
 }

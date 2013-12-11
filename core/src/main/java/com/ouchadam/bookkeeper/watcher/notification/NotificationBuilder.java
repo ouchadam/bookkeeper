@@ -66,7 +66,14 @@ class NotificationBuilder {
     private Notification.Builder getInitialNotification(NotificationDataHolder notificationDataHolder) {
         Notification.Builder defaultNotification = createDefaultDownloading(builder);
         defaultNotification.setContentTitle(getContentTitle(notificationDataHolder));
+        setClickListeners(notificationDataHolder, defaultNotification);
         return defaultNotification;
+    }
+
+    private void setClickListeners(NotificationDataHolder notificationDataHolder, Notification.Builder defaultNotification) {
+        if (notificationDataHolder.getOnClick() != null) {
+            defaultNotification.setContentIntent(notificationDataHolder.getOnClick());
+        }
     }
 
     private Notification.Builder createDefaultDownloading(Notification.Builder notification) {

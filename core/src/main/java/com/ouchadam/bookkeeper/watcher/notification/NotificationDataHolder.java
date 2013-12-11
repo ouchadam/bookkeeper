@@ -1,5 +1,6 @@
 package com.ouchadam.bookkeeper.watcher.notification;
 
+import android.app.PendingIntent;
 import android.content.Intent;
 
 import com.ouchadam.bookkeeper.domain.DownloadId;
@@ -8,10 +9,14 @@ class NotificationDataHolder {
 
     private final String title;
     private final DownloadId downloadId;
+    private final PendingIntent onClick;
+    private final PendingIntent onCancel;
 
-    public NotificationDataHolder(String title, DownloadId downloadId) {
+    public NotificationDataHolder(String title, DownloadId downloadId, PendingIntent onClick, PendingIntent onCancel) {
         this.title = title;
         this.downloadId = downloadId;
+        this.onClick = onClick;
+        this.onCancel = onCancel;
     }
 
     public boolean isWatching(DownloadId downloadId) {
@@ -21,7 +26,13 @@ class NotificationDataHolder {
     public static NotificationDataHolder from(Intent intent) {
         String title = getTitleFrom(intent);
         DownloadId downloadId = new DownloadId(getDownloadIdFrom(intent));
-        return new NotificationDataHolder(title, downloadId);
+        PendingIntent onClick = getPendingIntentFrom(intent, DownloadNotificationServiceState.ON_CLICK);
+        PendingIntent onCancel = getPendingIntentFrom(intent, DownloadNotificationServiceState.ON_CANCEL);
+        return new NotificationDataHolder(title, downloadId, onClick, onCancel);
+    }
+
+    private static PendingIntent getPendingIntentFrom(Intent intent, String extra) {
+        return intent.getParcelableExtra(extra);
     }
 
     private static String getTitleFrom(Intent intent) {
@@ -69,4 +80,7 @@ class NotificationDataHolder {
         return (int) downloadId.value();
     }
 
+    public PendingIntent getOnClick() {
+        return onClick;
+    }
 }

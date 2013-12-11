@@ -11,6 +11,8 @@ public class DownloadNotificationServiceState extends Service implements Service
     public static final String ACTION_START = "start";
     public static final String TITLE = "title";
     public static final String DOWNLOAD_ID = "downloadId";
+    public static final String ON_CLICK = "onClick";
+    public static final String ON_CANCEL = "onCancel";
 
     private final FooFactory fooFactory;
 

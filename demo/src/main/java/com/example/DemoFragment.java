@@ -2,6 +2,8 @@ package com.example;
 
 import android.app.Activity;
 import android.app.Fragment;
+import android.app.PendingIntent;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -72,7 +74,11 @@ public class DemoFragment extends Fragment implements AdapterView.OnItemClickLis
     }
 
     private void createNotificationWatcher(Downloadable downloadable, DownloadId downloadId) {
-        new AsyncNotificationWatcher(getActivity(), downloadable, downloadId).startWatching();
+        new AsyncNotificationWatcher(getActivity(), downloadable, downloadId, createOnDownloadClicked(downloadId), null).startWatching();
+    }
+
+    private PendingIntent createOnDownloadClicked(DownloadId downloadId) {
+        return PendingIntent.getActivity(getActivity(), 0, new Intent(getActivity(), DemoActivity.class), PendingIntent.FLAG_UPDATE_CURRENT);
     }
 
     private ListItemWatcher createListItemWatcher(long itemId, DownloadId downloadId) {
