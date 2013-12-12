@@ -74,11 +74,18 @@ public class DemoFragment extends Fragment implements AdapterView.OnItemClickLis
     }
 
     private void createNotificationWatcher(Downloadable downloadable, DownloadId downloadId) {
-        new AsyncNotificationWatcher(getActivity(), downloadable, downloadId, createOnDownloadClicked(downloadId), null).startWatching();
+        new AsyncNotificationWatcher(getActivity(), downloadable, downloadId, createOnDownloadClicked(), createOnCancelClicked(downloadId)).startWatching();
     }
 
-    private PendingIntent createOnDownloadClicked(DownloadId downloadId) {
+    private PendingIntent createOnDownloadClicked() {
         return PendingIntent.getActivity(getActivity(), 0, new Intent(getActivity(), DemoActivity.class), PendingIntent.FLAG_UPDATE_CURRENT);
+    }
+
+    private PendingIntent createOnCancelClicked(DownloadId downloadId) {
+        Intent intent = new Intent(getActivity(), DemoActivity.class);
+        intent.setAction(DemoActivity.CANCEL_DOWNLOAD_ACTION);
+        intent.putExtra(DemoActivity.DOWNLOAD_ID_EXTRA, downloadId);
+        return PendingIntent.getActivity(getActivity(), 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
     }
 
     private ListItemWatcher createListItemWatcher(long itemId, DownloadId downloadId) {

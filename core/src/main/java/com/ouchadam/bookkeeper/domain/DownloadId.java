@@ -1,6 +1,8 @@
 package com.ouchadam.bookkeeper.domain;
 
-public class DownloadId {
+import java.io.Serializable;
+
+public class DownloadId implements Serializable {
 
     private static final long INVALID_ID_VALUE = -1L;
     private static final DownloadId INVALID_ID = new DownloadId(INVALID_ID_VALUE);

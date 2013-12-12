@@ -83,4 +83,8 @@ class NotificationDataHolder {
     public PendingIntent getOnClick() {
         return onClick;
     }
+
+    public PendingIntent getOnCancel() {
+        return onCancel;
+    }
 }
